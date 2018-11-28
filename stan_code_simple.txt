@@ -201,3 +201,9 @@ model {
         }
     }
 }
+
+generated quantities {
+    vector [n_sne] outl_loglike_save;
+    outl_loglike_save = outl_loglike;
+}
+
