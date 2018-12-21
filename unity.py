@@ -12,7 +12,13 @@ import pystan
 def run(model, data, steps, chains, interactive):
 
     sm, stan_data = load(model, data)
-
+    
+    # todo protect the user by filtering keys in stan_data. Remove any unneaded? Romove any with sting data? Any other tests?
+    stan_vars = ['n_sne', 'n_props', 'n_non_gaus_props', 'n_sn_set', 'sn_set_inds',
+                 'z_helio', 'z_CMB', 'obs_mBx1c', 'obs_mBx1c_cov', 'n_age_mix', 'age_gaus_mean',
+                 'age_gaus_std', 'age_gaus_A', 'do_fullDint', 'outl_frac_prior_lnmean',
+                 'outl_frac_prior_lnwidth', 'lognormal_intr_prior', 'allow_alpha_S_N']
+    stan_data = dict((i, stan_data[i]) for i in stan_vars)
     fit = sm.sampling(data=stan_data, iter=steps, chains=chains)
     print(fit)    # before all else, print to screen.
     save(fit, path.splitext(path.basename(data))[0])
