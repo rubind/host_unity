@@ -1,0 +1,3 @@
+[submodule "kde_corner"]
+	path = kde_corner
+	url = https://github.com/rubind/kde_corner
