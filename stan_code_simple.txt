@@ -14,7 +14,7 @@ data {
     int<lower=0> n_non_gaus_props; // e.i. local and/or global age
     int<lower=1> n_sn_set;
 
-    int<lower=0> sn_set_inds[n_sne]; // use python index numbering
+    int<lower=0, upper=n_sn_set - 1> sn_set_inds[n_sne]; // use python index numbering
 
     vector <lower=0> [n_sne] z_helio;
     vector <lower=0> [n_sne] z_CMB;
@@ -22,8 +22,8 @@ data {
     vector[n_props - n_non_gaus_props] obs_mBx1c [n_sne];  // don't include the non-gaussian age property.
     matrix[n_props - n_non_gaus_props, n_props - n_non_gaus_props] obs_mBx1c_cov [n_sne];
 
-    int<lower=1> n_age_mix;
-    vector[n_age_mix] age_gaus_mean [n_non_gaus_props, n_sne];
+    int<lower=0> n_age_mix;
+    vector[n_age_mix] age_gaus_mean [n_non_gaus_props, n_sne];   // shape of (n_non_gaus_props, n_sne, n_age_mix)
     vector[n_age_mix] age_gaus_std [n_non_gaus_props, n_sne];
     simplex[n_age_mix] age_gaus_A [n_non_gaus_props, n_sne];
 
@@ -201,3 +201,9 @@ model {
         }
     }
 }
+
+generated quantities {
+    vector [n_sne] outl_loglike_save;
+    outl_loglike_save = outl_loglike;
+}
+
