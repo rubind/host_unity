@@ -10,9 +10,9 @@ from scipy.linalg import block_diag
 
 
 JLA_PATH = '~/jla_light_curves'
-FIT_DIR = './pub_snemo7_jla_fits/'
+FIT_DIR = './sam_pub_snemo7_jla_fits/'
 MODEL = sncosmo.Model(source='snemo7')
-OUT_PATH = './RH_JLA_pub_snemo7.pkl'
+OUT_PATH = './SD_JLA_pub_snemo7.pkl'
 
 
 def calc_mbstar(model, coefs, z):
@@ -42,17 +42,23 @@ meta = pd.read_csv(os.path.join(JLA_PATH, 'jla_lcparams.txt'),
 fits = {}
 for fname in os.listdir(FIT_DIR):
     path = os.path.join(FIT_DIR, fname)
-    if len(fname[3:].split('.')) == 3:
-        name = 'SDSS'+fname[3:].split('.')[0]
+#     fname = fname[3:]
+    if len(fname.split('.')) == 3:
+        name = 'SDSS'+fname.split('.')[0]
     else:
-        name = fname[3:].split('.')[0]
-    fits[name] = pickle.load(open(path, 'rb'))
+        name = fname.split('.')[0]
+    try:
+        fits[name] = pickle.load(open(path, 'rb'))
+    except IsADirectoryError:
+        continue
 
 fit_df = pd.DataFrame.from_dict(fits).T
 for i, param_name in enumerate(fit_df['vparam_names'][0]):
-    fit_df[param_name] = [x[i+1] for x in fit_df['parameters'].values]
+#     fit_df[param_name] = [x[i+1] for x in fit_df['parameters'].values]
+    fit_df[param_name] = [x[i] for x in fit_df['parameters'].values]
     fit_df['d'+param_name] = [x[param_name] for x in fit_df['errors'].values]
-    
+
+
 # Combine the data into a single table
 data = fit_df.merge(meta,
                     right_on='name',
@@ -61,7 +67,8 @@ data = fit_df.merge(meta,
 
 # Convert c0 to mb
 data['mbstar'] = [calc_mbstar(MODEL, x['parameters'][2:], x['zhel']) for _, x in data.iterrows()]
-data['dmbstar'] = [(2.5 * np.sqrt(x['covariance'][1, 1])/(x['parameters'][2] * np.log(10)))**2 for _, x in data.iterrows()]
+# data['dmbstar'] = [(2.5 * np.sqrt(x['covariance'][1, 1])/(x['parameters'][2] * np.log(10)))**2 for _, x in data.iterrows()]
+data['dmbstar'] = [(2.5 * np.sqrt(x['covariance'][2, 2])/(x['parameters'][2] * np.log(10)))**2 for _, x in data.iterrows()]
 
 # Convert observed parameters into an array
 obs_data = np.hstack([np.array([[x] for x in data.mbstar.values]),
@@ -69,9 +76,13 @@ obs_data = np.hstack([np.array([[x] for x in data.mbstar.values]),
                       np.array([[x] for x in data['3rdvar'].values])])
 
 # Calculate the combined covariance matrix
-obs_cov = np.array([block_diag(x**2, y[2:, 2:], z**2) for x, y, z in zip(data.dmbstar.values,
+# obs_cov = np.array([block_diag(x**2, y[2:, 2:], z**2) for x, y, z in zip(data.dmbstar.values,
+#                                                                          data.covariance.values,
+#                                                                          data['d3rdvar'].values)])
+obs_cov = np.array([block_diag(x**2, y[3:, 3:], z**2) for x, y, z in zip(data.dmbstar.values,
                                                                          data.covariance.values,
                                                                          data['d3rdvar'].values)])
+
 # Format for Stan
 stan_data = {'n_sne': len(data),
              'names': data.name.values,
