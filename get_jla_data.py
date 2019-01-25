@@ -12,7 +12,7 @@ from scipy.linalg import block_diag
 JLA_PATH = '~/jla_light_curves'
 FIT_DIR = './sam_pub_snemo7_jla_fits/'
 MODEL = sncosmo.Model(source='snemo7')
-OUT_PATH = './SD_JLA_pub_snemo7.pkl'
+OUT_PATH = './SD_JLA_pub_snemo7_fixed_cov.pkl'
 
 
 def calc_mbstar(model, coefs, z):
@@ -67,8 +67,6 @@ data = fit_df.merge(meta,
 
 # Convert c0 to mb
 data['mbstar'] = [calc_mbstar(MODEL, x['parameters'][2:], x['zhel']) for _, x in data.iterrows()]
-# data['dmbstar'] = [(2.5 * np.sqrt(x['covariance'][1, 1])/(x['parameters'][2] * np.log(10)))**2 for _, x in data.iterrows()]
-data['dmbstar'] = [(2.5 * np.sqrt(x['covariance'][2, 2])/(x['parameters'][2] * np.log(10)))**2 for _, x in data.iterrows()]
 
 # Convert observed parameters into an array
 obs_data = np.hstack([np.array([[x] for x in data.mbstar.values]),
@@ -76,12 +74,17 @@ obs_data = np.hstack([np.array([[x] for x in data.mbstar.values]),
                       np.array([[x] for x in data['3rdvar'].values])])
 
 # Calculate the combined covariance matrix
-# obs_cov = np.array([block_diag(x**2, y[2:, 2:], z**2) for x, y, z in zip(data.dmbstar.values,
-#                                                                          data.covariance.values,
-#                                                                          data['d3rdvar'].values)])
-obs_cov = np.array([block_diag(x**2, y[3:, 3:], z**2) for x, y, z in zip(data.dmbstar.values,
-                                                                         data.covariance.values,
-                                                                         data['d3rdvar'].values)])
+obs_cov = []
+for _, sn in data.iterrows():
+    cov = np.zeros((9, 9))
+    cov[0, 0] = sn.covariance[2, 2] * (-2.5/(np.log(10)*sn.parameters[2]))**2
+    cov[1:-1, 0] = sn.covariance[3:, 2] * (-2.5/(np.log(10)*sn.parameters[2]))
+    cov[0, 1:-1] = sn.covariance[2, 3:] * (-2.5/(np.log(10)*sn.parameters[2]))
+    cov[1:-1, 1:-1] = sn.covariance[3:, 3:]
+    cov[-1, -1] = sn['d3rdvar']**2
+    obs_cov.append(cov)
+obs_cov = np.array(obs_cov)
+
 
 # Format for Stan
 stan_data = {'n_sne': len(data),
