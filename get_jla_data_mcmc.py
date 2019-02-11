@@ -10,9 +10,9 @@ from scipy.linalg import block_diag
 
 
 JLA_PATH = '~/jla_light_curves'
-FIT_DIR = './mcmc_jla_snemo7_fits/'
+FIT_DIR = './mcmc_jla_snemo7_fits_error_floor/'
 MODEL = sncosmo.Model(source='snemo7')
-OUT_PATH = './JLA_pub_snemo7_mcmc.pkl'
+OUT_PATH = './JLA_pub_snemo7_mcmc_error_floor.pkl'
 
 
 def calc_mbstar(model, coefs, z):
@@ -48,7 +48,6 @@ for fname in os.listdir(FIT_DIR):
         name = fname.split('.')[0]
     try:
         fits[name] = pickle.load(open(path, 'rb'))
-        print(name, path)
     except IsADirectoryError:
         continue
 
