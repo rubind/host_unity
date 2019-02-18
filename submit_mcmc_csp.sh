@@ -1,0 +1,16 @@
+qsub /home/samdixon/host_unity/scripts/mcmc_csp_0_8.sh
+qsub /home/samdixon/host_unity/scripts/mcmc_csp_8_17.sh
+qsub /home/samdixon/host_unity/scripts/mcmc_csp_17_26.sh
+qsub /home/samdixon/host_unity/scripts/mcmc_csp_26_35.sh
+qsub /home/samdixon/host_unity/scripts/mcmc_csp_35_44.sh
+qsub /home/samdixon/host_unity/scripts/mcmc_csp_44_52.sh
+qsub /home/samdixon/host_unity/scripts/mcmc_csp_52_61.sh
+qsub /home/samdixon/host_unity/scripts/mcmc_csp_61_70.sh
+qsub /home/samdixon/host_unity/scripts/mcmc_csp_70_79.sh
+qsub /home/samdixon/host_unity/scripts/mcmc_csp_79_88.sh
+qsub /home/samdixon/host_unity/scripts/mcmc_csp_88_96.sh
+qsub /home/samdixon/host_unity/scripts/mcmc_csp_96_105.sh
+qsub /home/samdixon/host_unity/scripts/mcmc_csp_105_114.sh
+qsub /home/samdixon/host_unity/scripts/mcmc_csp_114_123.sh
+qsub /home/samdixon/host_unity/scripts/mcmc_csp_123_132.sh
+qsub /home/samdixon/host_unity/scripts/mcmc_csp_132_141.sh
