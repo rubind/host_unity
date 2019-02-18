@@ -8,8 +8,11 @@ import pandas as pd
 from astropy.io import ascii
 from astropy.table import Table
 
-DATA = pd.read_csv('/home/samdixon/foundation_photometry.txt', delimiter=', ')
-SAVE_DIR = 'mcmc_jones_snemo7_fits'
+DATA = pd.read_csv('/home/samdixon/foundation_photometry.txt', delimiter=', ', engine='python')
+META = ascii.read('/home/samdixon/foundation_lc_params.tex', format='latex').to_pandas()
+META = META.set_index('SN')
+
+SAVE_DIR = 'mcmc_ps_snemo7_fits'
 SCRIPT_DIR = 'scripts'
 
 if not os.path.isdir(SAVE_DIR):
@@ -50,8 +53,9 @@ def make_scripts(n):
 
 
 def get_foundation_lc(sn_name):
-    sn_data = data[data['SN'] == sn_name]
-    meta_data = foundation_params.loc[sn_name]
+    print(sn_name)
+    sn_data = DATA[DATA['SN'] == sn_name]
+    meta_data = META.loc[sn_name]
     meta = {'name': sn_name,
             'z': float(meta_data['z_helio'].split()[0]),
             't0': float(meta_data['Peak_MJD'].split()[0])}
@@ -67,16 +71,14 @@ def get_foundation_lc(sn_name):
 def fit_lc_and_save(lc):
     name = lc.meta['name']
     model = sncosmo.Model(source='snemo7')
-    if type(name) is float:
-        name = int(name)
     z = lc.meta['z']
     bounds = {}
-    t0 = np.mean(lc['mjd'])
-    bounds['t0'] = (min(lc['mjd'])-20, max(lc['mjd']))
-    for param_name in model.source.param_names[1:]:
-        bounds[param_name] = (-50, 50)
-    model.set(z=z, t0=t0)
+    t0 = np.mean(lc['time'])
+    bounds['t0'] = (min(lc['time'])-20, max(lc['time']))
     try:
+        for param_name in model.source.param_names[1:]:
+            bounds[param_name] = (-50, 50)
+        model.set(z=z, t0=t0)
         minuit_result, minuit_fit_model = sncosmo.fit_lc(lc, model, model.param_names[1:], bounds=bounds,
                                                          phase_range=(-10, 40), warn=False)
         emcee_result, emcee_fit_model = sncosmo.mcmc_lc(sncosmo.select_data(lc, minuit_result['data_mask']),

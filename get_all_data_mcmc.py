@@ -18,7 +18,7 @@ CSP_FIT_DIR = './mcmc_csp_snemo7_fits/'
 PS_FIT_DIR = './mcmc_ps_snemo7_fits/'
 
 MODEL = sncosmo.Model(source='snemo7')
-OUT_PATH = './pub_snemo7_mcmc_jla+csp.pkl'
+OUT_PATH = './pub_snemo7_mcmc_jla+csp+foundation.pkl'
 
 
 def calc_mbstar(model, coefs, z):
@@ -143,8 +143,39 @@ combined_csp = combined_csp.rename({'zhelio': 'zhel'}, axis=1)
 combined_csp['set'] = [jla.set.max()+1 for x in combined_csp.index]
 combined_csp.index = combined_csp.apply(lambda x: 'SN'+x.name, axis=1)
 
+# Foundation
+ps_data = pd.read_csv('/home/samdixon/foundation_photometry.txt', delimiter=', ', engine='python')
+ps_meta = ascii.read('/home/samdixon/foundation_lc_params.tex', format='latex').to_pandas()
+ps_meta = ps_meta.set_index('SN')
+ps_meta['zcmb'] = [float(x.split()[0]) for x in ps_meta['z_CMB'].values]
+ps_meta['zhel'] = [float(x.split()[0]) for x in ps_meta['z_helio'].values]
+
+jones_ps_host = sncosmo.read_snana_ascii('PS_lcparams.dat', default_tablename='SN')[1]['SN'].to_pandas()
+jones_ps_host = jones_ps_host.set_index('CID')
+
+combined_ps = defaultdict(list)
+for sn in ps_meta.index:
+    match_rg = gupta_host[gupta_host.index.str.contains(sn)]
+    if len(match_rg)==1:
+        combined_ps['SN'].append(sn)
+        combined_ps['logM'].append(match_rg.Mass.values[0])
+        combined_ps['logM_err'].append(np.mean([match_rg.Mass_lo, match_rg.Mass_hi]))
+        combined_ps['host_source'].append('RG')
+    else:
+        match_dj = jones_ps_host[(jones_ps_host.index.str.contains(sn)) | (jones_ps_host.index==sn.lower())]
+        if len(match_dj)==1:
+            combined_ps['SN'].append(sn)
+            combined_ps['logM'].append(match_dj.HOST_LOGMASS.values[0])
+            combined_ps['logM_err'].append(match_dj.HOST_LOGMASS_ERR.values[0])
+            combined_ps['host_source'].append('DJ')
+combined_ps = pd.DataFrame(combined_ps)
+combined_ps = combined_ps.set_index('SN')
+combined_ps = combined_ps.merge(ps_meta, left_index=True, right_index=True)
+combined_ps['set'] = [jla.set.max()+2 for x in combined_ps.index]
+
 # Putting everything together
-combined_meta = pd.concat([jla, combined_csp], sort=True)
+combined_meta = pd.concat([jla, combined_csp, combined_ps], sort=True)
+# combined_meta = pd.concat([combined_meta, combined_ps], sort=True)
 data = fit_df.merge(combined_meta,
                     right_index=True,
                     left_index=True)
