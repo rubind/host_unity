@@ -1,0 +1,16 @@
+qsub /home/samdixon/host_unity/scripts/mcmc_jla_0_61.sh
+qsub /home/samdixon/host_unity/scripts/mcmc_jla_61_122.sh
+qsub /home/samdixon/host_unity/scripts/mcmc_jla_122_183.sh
+qsub /home/samdixon/host_unity/scripts/mcmc_jla_183_245.sh
+qsub /home/samdixon/host_unity/scripts/mcmc_jla_245_306.sh
+qsub /home/samdixon/host_unity/scripts/mcmc_jla_306_367.sh
+qsub /home/samdixon/host_unity/scripts/mcmc_jla_367_429.sh
+qsub /home/samdixon/host_unity/scripts/mcmc_jla_429_490.sh
+qsub /home/samdixon/host_unity/scripts/mcmc_jla_490_551.sh
+qsub /home/samdixon/host_unity/scripts/mcmc_jla_551_613.sh
+qsub /home/samdixon/host_unity/scripts/mcmc_jla_613_674.sh
+qsub /home/samdixon/host_unity/scripts/mcmc_jla_674_735.sh
+qsub /home/samdixon/host_unity/scripts/mcmc_jla_735_797.sh
+qsub /home/samdixon/host_unity/scripts/mcmc_jla_797_858.sh
+qsub /home/samdixon/host_unity/scripts/mcmc_jla_858_919.sh
+qsub /home/samdixon/host_unity/scripts/mcmc_jla_919_981.sh
