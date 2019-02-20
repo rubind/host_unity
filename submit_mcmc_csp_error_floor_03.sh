@@ -1,0 +1,16 @@
+qsub /home/samdixon/host_unity/scripts/mcmc_csp_err_floor_03_0_8.sh
+qsub /home/samdixon/host_unity/scripts/mcmc_csp_err_floor_03_8_17.sh
+qsub /home/samdixon/host_unity/scripts/mcmc_csp_err_floor_03_17_26.sh
+qsub /home/samdixon/host_unity/scripts/mcmc_csp_err_floor_03_26_35.sh
+qsub /home/samdixon/host_unity/scripts/mcmc_csp_err_floor_03_35_44.sh
+qsub /home/samdixon/host_unity/scripts/mcmc_csp_err_floor_03_44_52.sh
+qsub /home/samdixon/host_unity/scripts/mcmc_csp_err_floor_03_52_61.sh
+qsub /home/samdixon/host_unity/scripts/mcmc_csp_err_floor_03_61_70.sh
+qsub /home/samdixon/host_unity/scripts/mcmc_csp_err_floor_03_70_79.sh
+qsub /home/samdixon/host_unity/scripts/mcmc_csp_err_floor_03_79_88.sh
+qsub /home/samdixon/host_unity/scripts/mcmc_csp_err_floor_03_88_96.sh
+qsub /home/samdixon/host_unity/scripts/mcmc_csp_err_floor_03_96_105.sh
+qsub /home/samdixon/host_unity/scripts/mcmc_csp_err_floor_03_105_114.sh
+qsub /home/samdixon/host_unity/scripts/mcmc_csp_err_floor_03_114_123.sh
+qsub /home/samdixon/host_unity/scripts/mcmc_csp_err_floor_03_123_132.sh
+qsub /home/samdixon/host_unity/scripts/mcmc_csp_err_floor_03_132_141.sh
