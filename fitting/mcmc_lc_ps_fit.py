@@ -37,33 +37,8 @@ def read_and_register(name):
     band = sncosmo.Bandpass(wave=wave, trans=trans, name=name)
     sncosmo.register(band, force=True)
 
-    
-def make_scripts(n, err_floor=None):
-    n_sne = len(DATA.SN.unique())
-    if err_floor is not None:
-        submit_script_path = 'submit_mcmc_ps_error_floor_{:02d}.sh'.format(int(err_floor*100))
-    else:
-        submit_script_path = 'submit_mcmc_ps.sh'
-    with open(submit_script_path, 'w') as subf:
-        for script_id in range(n):
-            start = int(n_sne/n*script_id)
-            end = int(n_sne/n*(script_id+1))
-            print(start, end)
-            if err_floor is not None:
-                script_path = os.path.join(SCRIPT_DIR, 'mcmc_ps_error_floor_{:02d}_{}_{}.sh').format(int(err_floor*100), start, end)
-                with open(script_path, 'w') as f:
-                    f.write(TEMPLATE_ERR.format(int(err_floor*100), start, end, start, end, err_floor))
-            else:
-                script_path = os.path.join(SCRIPT_DIR, 'mcmc_ps_{}_{}.sh'.format(start, end))
-                with open(script_path, 'w') as f:
-                    f.write(TEMPLATE.format(start, end, start, end))
-            os.chmod(script_path, 0o755)
-            subf.write('qsub {}\n'.format(os.path.abspath(script_path)))
-    os.chmod(submit_script_path, 0o755)
-
 
 def get_foundation_lc(sn_name):
-    print(sn_name)
     sn_data = DATA[DATA['SN'] == sn_name]
     meta_data = META.loc[sn_name]
     meta = {'name': sn_name,
@@ -97,53 +72,39 @@ def modify_error(lc, error_floor=0.):
     return new_lc
 
 
-def fit_lc_and_save(lc, save_dir):
+def fit_lc_and_save(lc, model_name, save_dir):
     name = lc.meta['name']
-    model = sncosmo.Model(source='snemo7')
+    model = sncosmo.Model(source=model_name)
     z = lc.meta['z']
     bounds = {}
     t0 = np.mean(lc['time'])
     bounds['t0'] = (min(lc['time'])-20, max(lc['time']))
-    try:
-        for param_name in model.source.param_names[1:]:
-            bounds[param_name] = (-50, 50)
-        model.set(z=z, t0=t0)
-        minuit_result, minuit_fit_model = sncosmo.fit_lc(lc, model, model.param_names[1:], bounds=bounds,
-                                                         phase_range=(-10, 40), warn=False)
-        emcee_result, emcee_fit_model = sncosmo.mcmc_lc(sncosmo.select_data(lc, minuit_result['data_mask']),
-                                                        minuit_fit_model,
-                                                        model.param_names[1:],
-                                                        guess_t0=False,
-                                                        bounds=bounds,
-                                                        warn=False,
-                                                        nwalkers=20)
-        save_path = os.path.join(save_dir, '{}.pkl'.format(name))
-        pickle.dump(emcee_result, open(save_path, 'wb'))
-    except:
-        print('Error fitting {}'.format(name))
+    bounds['z'] = ((1-1e-5)*z, (1+1e-5)*z)
+    for param_name in model.source.param_names[1:]:
+        bounds[param_name] = (-50, 50)
+    model.set(z=z, t0=t0)
+    modelcov = model_name == 'salt2'
+    minuit_result, minuit_fit_model = sncosmo.fit_lc(lc, model, model.param_names, bounds=bounds,
+                                                     phase_range=(-10, 40), warn=False, modelcov=modelcov)
+    emcee_result, emcee_fit_model = sncosmo.mcmc_lc(sncosmo.select_data(lc, minuit_result['data_mask']),
+                                                    minuit_fit_model,
+                                                    model.param_names,
+                                                    guess_t0=False,
+                                                    bounds=bounds,
+                                                    warn=False,
+                                                    nwalkers=20,
+                                                    modelcov=modelcov)
+    save_path = os.path.join(save_dir, '{}.pkl'.format(name))
+    pickle.dump(emcee_result, open(save_path, 'wb'))
 
 
 def main():
-    err_floor = None
-    if len(sys.argv[1:]) == 0:
-        make_scripts(16)
-        return
-    elif len(sys.argv[1:]) == 1:
-        err_floor = float(sys.argv[1])
-        make_scripts(16, err_floor)
-        return
-    elif len(sys.argv[1:]) == 2:
-        start, finish = sys.argv[1:]
-    elif len(sys.argv[1:]) == 3:
-        start, finish, err_floor = sys.argv[1:]
-        err_floor = float(err_floor)
-    else:
-        return
+    model_name, start, finish, err_floor = sys.argv[1:]
+    start = int(start)
+    finish = int(finish)
+    err_floor = float(err_floor)
+    save_dir = 'results/ps_{}_{:02d}'.format(model_name, int(err_floor*100))
     
-    if err_floor is not None:
-        save_dir = 'mcmc_ps_snemo7_fits_error_floor_{:02d}'.format(int(err_floor*100))
-    else:
-        save_dir = 'mcmc_ps_snemo7_fits'
     if not os.path.isdir(save_dir):
         os.makedirs(save_dir)
     
@@ -164,7 +125,7 @@ def main():
         except IOError:
             print('Fitting {}'.format(name))
             sys.stdout.flush()
-            fit_lc_and_save(lc, save_dir)
+            fit_lc_and_save(lc, model_name, save_dir)
 
                 
 if __name__=='__main__':

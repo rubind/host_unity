@@ -13,12 +13,12 @@ from astropy.coordinates import SkyCoord
 from scipy.linalg import block_diag
 
 
-JLA_FIT_DIR = './mcmc_jla_snemo7_fits/'
-CSP_FIT_DIR = './mcmc_csp_snemo7_fits/'
-PS_FIT_DIR = './mcmc_ps_snemo7_fits/'
+JLA_FIT_DIR = './mcmc_jla_salt_fits_error_floor_02/'
+CSP_FIT_DIR = './mcmc_csp_salt_fits_error_floor_02/'
+PS_FIT_DIR = './mcmc_ps_salt_fits_error_floor_02/'
 
 MODEL = sncosmo.Model(source='snemo7')
-OUT_PATH = './pub_snemo7_mcmc_jla+csp+foundation.pkl'
+OUT_PATH = './pub_salt_mcmc_jla+csp+foundation_02.pkl'
 
 
 def calc_mbstar(model, coefs, z):
