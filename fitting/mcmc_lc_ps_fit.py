@@ -103,7 +103,7 @@ def main():
     start = int(start)
     finish = int(finish)
     err_floor = float(err_floor)
-    save_dir = 'results/ps_{}_{:02d}'.format(model_name, int(err_floor*100))
+    save_dir = '/home/samdixon/host_unity/fitting/results/ps_{}_{:02d}'.format(model_name, int(err_floor*100))
     
     if not os.path.isdir(save_dir):
         os.makedirs(save_dir)
@@ -113,7 +113,12 @@ def main():
 
     lcs = []
     for sn in DATA.SN.unique()[int(start):int(finish)]:
-        lc = get_foundation_lc(sn)
+        try:
+            lc = get_foundation_lc(sn)
+        except:
+            print('Error reading LC {}'.format(sn))
+            sys.stdout.flush()
+            continue
         if err_floor is not None:
             lc = modify_error(lc, err_floor)
         name = lc.meta['name']
