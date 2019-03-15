@@ -1,0 +1,6 @@
+# default coverage configurations for pytest-cov
+# not sure why, but with out this file coverage tries to do ALL of my dependencies.
+[run]
+omit = test*, script*, src/*
+branch = True
+source = ./unity

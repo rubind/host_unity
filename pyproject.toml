@@ -1,0 +1,41 @@
+[tool.poetry]
+name = "unity"
+version = "0.1.0"
+description = ""
+authors = ["Benjamin Rose <brose@stsci.edu>", "David Rubin <drubin@stsci.edu>"]
+license = "MIT"
+readme = "README.rst"
+repository = "https://github.com/rubind/host_unity"
+# homepage
+# documentation
+classifiers = [
+	"Develoment Status :: 4 - Beta",
+	"Environment :: Console",
+	"Operating System :: MacOS :: MacOS X",
+	"Operating System :: POSIX"
+]
+
+[tool.poetry.dependencies]
+python = "^3.6"
+numpy = "^1.16"
+pystan = "=2.17.1"
+click = "^7.0"
+pandas = "^0.24.1"
+sncosmo = {git = "https://github.com/sncosmo/sncosmo.git"}
+corner = "^2.0"
+seaborn = "^0.9.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^4.3"
+pytest-cov = "^2.6"
+numpydoc = "^0.8.0"
+sphinx = "^1.8"
+sphinx-autodoc-typehints = "^1.6"
+sphinx_rtd_theme = "^0.4.3"
+
+[tool.poetry.scripts]
+unity = "unity.cli:cli"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"

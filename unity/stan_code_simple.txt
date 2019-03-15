@@ -200,10 +200,7 @@ model {
             alpha_S_N[i][j] ~ normal(0, 5);
         }
     }
-}
 
-generated quantities {
-    vector [n_sne] outl_loglike_save;
-    outl_loglike_save = outl_loglike;
+    sigma_int ~ normal(0, 0.2);
 }
 
