@@ -9,7 +9,8 @@ import pandas as pd
 from scipy.linalg import block_diag
 
 
-JLA_PATH = '~/jla_light_curves'
+# JLA_PATH = '~/jla_light_curves'
+JLA_PATH = '.'
 FIT_DIR = './sam_pub_snemo7_jla_fits/'
 MODEL = sncosmo.Model(source='snemo7')
 OUT_PATH = './SD_JLA_pub_snemo7_fixed_cov.pkl'

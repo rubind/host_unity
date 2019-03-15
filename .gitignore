@@ -111,3 +111,12 @@ scripts/
 *.e*
 *.o*
 
+*.pdf
+*.sublime-*
+# this is a stan model cache
+Unity_model.pickle.txt
+unity/model_cache/
+# Unity output files
+*fitparams.gzip.pkl
+*results.txt
+unity/data_*/
