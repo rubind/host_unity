@@ -210,7 +210,7 @@ def main(model, err_floor, prefix):
     # Format for Stan
     stan_data = {'n_sne': len(data),
                  'names': data.index.values,
-                 'n_props': 9,
+                 'n_props': 4,
                  'n_non_gaus_props': 0,
                  'n_sn_set': len(data.set.unique()),
                  'sn_set_inds': (data.set.values.astype(int)-1).astype(int),

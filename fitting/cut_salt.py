@@ -4,6 +4,7 @@
 __author__ = "Benjamin Rose"
 __email__ = "brose@stsci.edu"
 __data__ = "2019-03-14"
+__python__ = "^3.6"
 
 import pickle
 
@@ -63,9 +64,40 @@ for name in data['names']:
     else:
         passed_cut.append(False)
 
-for name in PASSED_02:
-    if name not in data['names']:
-        print(name)
+count = sum(passed_cut)
 
-print(sum(passed_cut))
-print(len(PASSED_02))
+if count != len(PASSED_02):
+    raise Warning(f'{count} found in pickle file, but {len(PASSED_02)} passed SNEMO7 cuts.')
+    print('SN not in pickle file:')
+    for name in PASSED_02:
+        if name not in data['names']:
+            print(name)
+    from sys import exit; exit()
+
+
+data['n_sne'] = count
+data['n_props'] = 4
+data['sn_set_inds'] = data['sn_set_inds'][passed_cut]
+data['z_helio'] = data['z_helio'][passed_cut]
+data['z_CMB'] = data['z_CMB'][passed_cut]
+data['obs_mBx1c'] = data['obs_mBx1c'][passed_cut]
+print('\n\nCHANGING COLOR VALUE BY -0.27!!\n')
+data['obs_mBx1c'][:,1] = data['obs_mBx1c'][:,1] - 0.27
+print('\nCHANGING COLOR VALUE BY -0.27!!\n\n')
+mean = np.mean(data['obs_mBx1c'][:,-1])
+print('\n\nSHIFTING MASS BY MEAN OF SMAPLE: ', mean, '\n')
+data['obs_mBx1c'][:,-1] = data['obs_mBx1c'][:,-1] - mean
+print('\nSHIFTING MASS BY MEAN OF SMAPLE: ', mean, '\n\n')
+data['obs_mBx1c_cov'] = data['obs_mBx1c_cov'][passed_cut]
+print('\n\nADDING 0.1 IN QUAD TO MASS COV!\n')
+data['obs_mBx1c_cov'][:, -1, -1] = np.sqrt(data['obs_mBx1c_cov'][:, -1, -1]**2 + 0.1**2)
+print('\nADDING 0.1 IN QUAD TO MASS COV!\n\n')
+
+data['n_sn_set'] = 1
+data['sn_set_inds'] = np.zeros(count, dtype=np.int)
+data['age_gaus_mean'] = np.zeros((0, count, 0))
+data['age_gaus_std'] = np.zeros((0, count, 0))
+data['age_gaus_A'] = np.zeros((0, count, 0))
+
+pickle.dump(data, open(f'satl2_jla+csp+ps_SNEMO7_02_passed.pkl', 'wb'))
+print('\n\nChanged color value by -0.27!')
