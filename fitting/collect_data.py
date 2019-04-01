@@ -73,13 +73,13 @@ def get_zhelio(RAdeg, DECdeg, z_CMB):
 def main(model, err_floor, prefix):
     print(model, err_floor, prefix)
     err_floor_int = int(err_floor*100)
-    RESULTS_DIR = './results'
+    RESULTS_DIR = './results_mw_reddening'
     JLA_FIT_DIR = os.path.join(RESULTS_DIR, 'jla_{}_{:02d}/'.format(model, err_floor_int))
     CSP_FIT_DIR = os.path.join(RESULTS_DIR, 'csp_{}_{:02d}/'.format(model, err_floor_int))
     PS_FIT_DIR = os.path.join(RESULTS_DIR, 'ps_{}_{:02d}/'.format(model, err_floor_int))
     
     MODEL = sncosmo.Model(source=model)
-    OUT_PATH = prefix + 'jla+csp+ps_{}_{:02d}.pkl'.format(model, err_floor_int)
+    OUT_PATH = prefix + 'mw_dered_jla+csp+ps_{}_{:02d}.pkl'.format(model, err_floor_int)
     
     # Read pickle files from fits
     fits = {}
@@ -189,16 +189,16 @@ def main(model, err_floor, prefix):
     
     # Convert c0 to mb
     data['mbstar'] = [calc_mbstar(MODEL, x['parameters'][2:], x['zhel']) for _, x in data.iterrows()]
-    
+            
     # Convert observed parameters into an array
     obs_data = np.hstack([np.array([[x] for x in data.mbstar.values]),
-                          np.array([x[3:] for x in data.parameters.values]),
+                          np.array([x[3:-2] for x in data.parameters.values]),
                           np.array([[x] for x in data['logM'].values])])
-    
+
     # Calculate the combined covariance matrix
     obs_cov = []
     for _, sn in data.iterrows():
-        cov = np.zeros((len(sn.parameters)-1, len(sn.parameters)-1))
+        cov = np.zeros((len(sn.parameters)-3, len(sn.parameters)-3))
         cov[0, 0] = sn.covariance[2, 2] * (-2.5/(np.log(10)*sn.parameters[2]))**2 # diagonal, m_b
         cov[1:-1, 0] = sn.covariance[3:, 2] * (-2.5/(np.log(10)*sn.parameters[2])) # off-diagonal, m_b x c_i
         cov[0, 1:-1] = sn.covariance[2, 3:] * (-2.5/(np.log(10)*sn.parameters[2])) # off-diagonal, c_i x m_b

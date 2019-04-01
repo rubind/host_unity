@@ -31,10 +31,14 @@ def modify_error(lc, error_floor=0.):
     
 def fit_lc_and_save(lc, model_name, save_dir):
     name = lc.meta['SN']
-    model = sncosmo.Model(source=model_name)
+    model = sncosmo.Model(source=model_name,
+                          effects=[sncosmo.CCM89Dust()],
+                          effect_names=['mw'],
+                          effect_frames=['obs'])
     if type(name) is float:
         name = int(name)
     z = lc.meta['Z_HELIO']
+    mwebv = lc.meta['MWEBV']
     bounds = {}
     try:
         t0 = float(lc.meta['DayMax'].split()[0])
@@ -50,20 +54,23 @@ def fit_lc_and_save(lc, model_name, save_dir):
     for param_name in model.source.param_names[1:]:
         bounds[param_name] = (-50, 50)
     modelcov = model_name=='salt2'
-    model.set(z=z, t0=t0)
+    model.set(z=z, t0=t0, mwebv=mwebv)
+    phase_range = (-15, 45) if model_name=='salt2' else (-10, 40)
+    wave_range = (3000, 7000) if model_name=='salt2' else None
     try:
-        minuit_result, minuit_fit_model = sncosmo.fit_lc(lc, model, model.param_names, bounds=bounds,
-                                                         phase_range=(-10, 40), warn=False, modelcov=modelcov)
-        emcee_result, emcee_fit_model = sncosmo.mcmc_lc(sncosmo.select_data(lc, minuit_result['data_mask']),
-                                                        minuit_fit_model,
-                                                        model.param_names,
-                                                        guess_t0=False,
-                                                        bounds=bounds,
-                                                        warn=False,
-                                                        nwalkers=20,
-                                                        modelcov=modelcov)
+        minuit_result, minuit_fit_model = sncosmo.fit_lc(lc, model, model.param_names[:-2], bounds=bounds,
+                                                         phase_range=phase_range, wave_range=wave_range,
+                                                         warn=False, modelcov=modelcov)
+#         emcee_result, emcee_fit_model = sncosmo.mcmc_lc(sncosmo.select_data(lc, minuit_result['data_mask']),
+#                                                         minuit_fit_model,
+#                                                         model.param_names,
+#                                                         guess_t0=False,
+#                                                         bounds=bounds,
+#                                                         warn=False,
+#                                                         nwalkers=20,
+#                                                         modelcov=modelcov)
         save_path = os.path.join(save_dir, '{}.pkl'.format(name))
-        pickle.dump(emcee_result, open(save_path, 'wb'))
+        pickle.dump(minuit_result, open(save_path, 'wb'))
     except:
         print('Fit to {} failed'.format(name))
         sys.stdout.flush()
@@ -74,7 +81,7 @@ def main():
     start = int(start)
     finish = int(finish)
     err_floor = float(err_floor)
-    save_dir = 'results/jla_{}_{:02d}'.format(model_name, int(err_floor*100))
+    save_dir = '/home/samdixon/host_unity/fitting/results_mw_reddening/jla_{}_{:02d}'.format(model_name, int(err_floor*100))
     
     if not os.path.isdir(save_dir):
         os.makedirs(save_dir)

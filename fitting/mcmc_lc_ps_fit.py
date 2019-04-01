@@ -11,6 +11,8 @@ from astropy.table import Table
 DATA = pd.read_csv('/home/samdixon/foundation_photometry.txt', delimiter=', ', engine='python')
 META = ascii.read('/home/samdixon/foundation_lc_params.tex', format='latex').to_pandas()
 META = META.set_index('SN')
+HOSTDATA = pd.read_csv('/home/samdixon/host_unity/fitting/gupta_host.txt', delim_whitespace=True)
+HOSTDATA = HOSTDATA.set_index('name')
 
 SCRIPT_DIR = 'scripts'
 if not os.path.isdir(SCRIPT_DIR):
@@ -41,9 +43,11 @@ def read_and_register(name):
 def get_foundation_lc(sn_name):
     sn_data = DATA[DATA['SN'] == sn_name]
     meta_data = META.loc[sn_name]
+    host = HOSTDATA.loc[sn_name]
     meta = {'name': sn_name,
             'z': float(meta_data['z_helio'].split()[0]),
-            't0': float(meta_data['Peak_MJD'].split()[0])}
+            't0': float(meta_data['Peak_MJD'].split()[0]),
+            'mwebv': host['MW_EBV']}
     lc = {'time': sn_data['MJD'],
           'band': sn_data['Filter'],
           'flux': sn_data['Flux'],
@@ -74,28 +78,39 @@ def modify_error(lc, error_floor=0.):
 
 def fit_lc_and_save(lc, model_name, save_dir):
     name = lc.meta['name']
-    model = sncosmo.Model(source=model_name)
+    model = sncosmo.Model(source=model_name,
+                          effects=[sncosmo.CCM89Dust()],
+                          effect_names=['mw'],
+                          effect_frames=['obs'])
     z = lc.meta['z']
+    mwebv = lc.meta['mwebv']
     bounds = {}
     t0 = np.mean(lc['time'])
     bounds['t0'] = (min(lc['time'])-20, max(lc['time']))
     bounds['z'] = ((1-1e-5)*z, (1+1e-5)*z)
     for param_name in model.source.param_names[1:]:
         bounds[param_name] = (-50, 50)
-    model.set(z=z, t0=t0)
+    model.set(z=z, t0=t0, mwebv=mwebv)
     modelcov = model_name == 'salt2'
-    minuit_result, minuit_fit_model = sncosmo.fit_lc(lc, model, model.param_names, bounds=bounds,
-                                                     phase_range=(-10, 40), warn=False, modelcov=modelcov)
-    emcee_result, emcee_fit_model = sncosmo.mcmc_lc(sncosmo.select_data(lc, minuit_result['data_mask']),
-                                                    minuit_fit_model,
-                                                    model.param_names,
-                                                    guess_t0=False,
-                                                    bounds=bounds,
-                                                    warn=False,
-                                                    nwalkers=20,
-                                                    modelcov=modelcov)
-    save_path = os.path.join(save_dir, '{}.pkl'.format(name))
-    pickle.dump(emcee_result, open(save_path, 'wb'))
+    phase_range = (-15, 45) if model_name=='salt2' else (-10, 40)
+    wave_range = (3000, 7000) if model_name=='salt2' else None
+    try:
+        minuit_result, minuit_fit_model = sncosmo.fit_lc(lc, model, model.param_names[:-2], bounds=bounds,
+                                                         phase_range=phase_range, wave_range=wave_range,
+                                                         warn=False, modelcov=modelcov)
+#         emcee_result, emcee_fit_model = sncosmo.mcmc_lc(sncosmo.select_data(lc, minuit_result['data_mask']),
+#                                                         minuit_fit_model,
+#                                                         model.param_names,
+#                                                         guess_t0=False,
+#                                                         bounds=bounds,
+#                                                         warn=False,
+#                                                         nwalkers=20,
+#                                                         modelcov=modelcov)
+        save_path = os.path.join(save_dir, '{}.pkl'.format(name))
+        pickle.dump(minuit_result, open(save_path, 'wb'))
+    except:
+        print('Fit to {} failed'.format(name))
+        sys.stdout.flush()
 
 
 def main():
@@ -103,7 +118,7 @@ def main():
     start = int(start)
     finish = int(finish)
     err_floor = float(err_floor)
-    save_dir = '/home/samdixon/host_unity/fitting/results/ps_{}_{:02d}'.format(model_name, int(err_floor*100))
+    save_dir = '/home/samdixon/host_unity/fitting/results_mw_reddening/ps_{}_{:02d}'.format(model_name, int(err_floor*100))
     
     if not os.path.isdir(save_dir):
         os.makedirs(save_dir)

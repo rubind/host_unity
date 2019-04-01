@@ -5,6 +5,7 @@ import sncosmo
 import numpy as np
 from collections import defaultdict
 from astropy.table import Table
+from sfdmap import SFDMap
 
 DATA_PATH = '/home/samdixon/CSP_Photometry_DR3/'
 
@@ -25,6 +26,7 @@ CSP_FILT_MAP = {'u': 'cspu',
                 'Hdw': 'csphd'}
 MAGSYS = sncosmo.get_magsystem('csp')
 
+MWDUSTMAP = SFDMap('/home/samdixon/sfddata/')
 
 def parse_csp_lc(path):
     meta = {}
@@ -36,6 +38,7 @@ def parse_csp_lc(path):
                 name, z, ra, dec = l.split()
                 meta['name'] = name.strip()
                 meta['z'] = float(z.strip())
+                meta['mwebv'] = MWDUSTMAP.ebv(float(ra), float(dec))
                 continue
             if l.split()[0] == 'filter':
                 current_filt = CSP_FILT_MAP[l.split()[-1]]
@@ -73,10 +76,14 @@ def modify_error(lc, error_floor=0.):
 
 def fit_lc_and_save(lc, model_name, save_dir):
     name = lc.meta['name']
-    model = sncosmo.Model(source=model_name)
+    model = sncosmo.Model(source=model_name,
+                          effects=[sncosmo.CCM89Dust()],
+                          effect_names=['mw'],
+                          effect_frames=['obs'])
     if type(name) is float:
         name = int(name)
     z = lc.meta['z']
+    mwebv = lc.meta['mwebv']
     bounds = {}
     t0 = np.mean(lc['time'])
     bounds['t0'] = (min(lc['time'])-20, max(lc['time']))
@@ -84,20 +91,23 @@ def fit_lc_and_save(lc, model_name, save_dir):
     for param_name in model.source.param_names[1:]:
         bounds[param_name] = (-50, 50)
     modelcov = model_name == 'salt2'
-    model.set(z=z, t0=t0)
+    model.set(z=z, t0=t0, mwebv=mwebv)
+    phase_range = (-15, 45) if model_name=='salt2' else (-10, 40)
+    wave_range = (3000, 7000) if model_name=='salt2' else None
     try:
-        minuit_result, minuit_fit_model = sncosmo.fit_lc(lc, model, model.param_names, bounds=bounds,
-                                                         phase_range=(-10, 40), warn=False, modelcov=modelcov)
-        emcee_result, emcee_fit_model = sncosmo.mcmc_lc(sncosmo.select_data(lc, minuit_result['data_mask']),
-                                                        minuit_fit_model,
-                                                        model.param_names,
-                                                        guess_t0=False,
-                                                        bounds=bounds,
-                                                        warn=False,
-                                                        nwalkers=20,
-                                                        modelcov=modelcov)
+        minuit_result, minuit_fit_model = sncosmo.fit_lc(lc, model, model.param_names[:-2], bounds=bounds,
+                                                         phase_range=phase_range, wave_range=wave_range,
+                                                         warn=False, modelcov=modelcov)
+#         emcee_result, emcee_fit_model = sncosmo.mcmc_lc(sncosmo.select_data(lc, minuit_result['data_mask']),
+#                                                         minuit_fit_model,
+#                                                         model.param_names,
+#                                                         guess_t0=False,
+#                                                         bounds=bounds,
+#                                                         warn=False,
+#                                                         nwalkers=20,
+#                                                         modelcov=modelcov)
         save_path = os.path.join(save_dir, '{}.pkl'.format(name))
-        pickle.dump(emcee_result, open(save_path, 'wb'))
+        pickle.dump(minuit_result, open(save_path, 'wb'))
     except:
         print('Fit to {} failed'.format(name))
         sys.stdout.flush()
@@ -108,7 +118,7 @@ def main():
     start = int(start)
     finish = int(finish)
     err_floor = float(err_floor)
-    save_dir = 'results/csp_{}_{:02d}'.format(model_name, int(err_floor*100))
+    save_dir = '/home/samdixon/host_unity/fitting/results_mw_reddening/csp_{}_{:02d}'.format(model_name, int(err_floor*100))
     
     if not os.path.isdir(save_dir):
         os.makedirs(save_dir)
