@@ -78,6 +78,10 @@ def main(model, err_floor, prefix):
     CSP_FIT_DIR = os.path.join(RESULTS_DIR, 'csp_{}_{:02d}/'.format(model, err_floor_int))
     PS_FIT_DIR = os.path.join(RESULTS_DIR, 'ps_{}_{:02d}/'.format(model, err_floor_int))
     
+    if model=='snemo7':
+        n_props = 9
+    else:
+        n_props = 4
     MODEL = sncosmo.Model(source=model)
     OUT_PATH = prefix + 'mw_dered_mcmc_jla+csp+ps_{}_{:02d}.pkl'.format(model, err_floor_int)
     
@@ -210,7 +214,7 @@ def main(model, err_floor, prefix):
     # Format for Stan
     stan_data = {'n_sne': len(data),
                  'names': data.index.values,
-                 'n_props': 4,
+                 'n_props': n_props,
                  'n_non_gaus_props': 0,
                  'n_sn_set': len(data.set.unique()),
                  'sn_set_inds': (data.set.values.astype(int)-1).astype(int),
