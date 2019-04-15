@@ -43,11 +43,12 @@ def read_and_register(name):
 def get_foundation_lc(sn_name):
     sn_data = DATA[DATA['SN'] == sn_name]
     meta_data = META.loc[sn_name]
-    host = HOSTDATA.loc[sn_name]
+    host = HOSTDATA[HOSTDATA.index.str.contains(sn_name)]
+    mwebv = host['MW_EBV'][0]
     meta = {'name': sn_name,
             'z': float(meta_data['z_helio'].split()[0]),
             't0': float(meta_data['Peak_MJD'].split()[0]),
-            'mwebv': host['MW_EBV']}
+            'mwebv': mwebv}
     lc = {'time': sn_data['MJD'],
           'band': sn_data['Filter'],
           'flux': sn_data['Flux'],
@@ -102,7 +103,7 @@ def fit_lc_and_save(lc, model_name, save_dir, no_mc):
         if not no_mc:
             emcee_result, emcee_fit_model = sncosmo.mcmc_lc(sncosmo.select_data(lc, minuit_result['data_mask']),
                                                             minuit_fit_model,
-                                                            model.param_names,
+                                                            model.param_names[:-2],
                                                             guess_t0=False,
                                                             bounds=bounds,
                                                             warn=False,

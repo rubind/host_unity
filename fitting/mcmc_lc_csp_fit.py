@@ -102,7 +102,7 @@ def fit_lc_and_save(lc, model_name, save_dir, no_mc):
         if not no_mc:
             emcee_result, emcee_fit_model = sncosmo.mcmc_lc(sncosmo.select_data(lc, minuit_result['data_mask']),
                                                             minuit_fit_model,
-                                                            model.param_names,
+                                                            model.param_names[:-2],
                                                             guess_t0=False,
                                                             bounds=bounds,
                                                             warn=False,

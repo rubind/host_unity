@@ -73,13 +73,13 @@ def get_zhelio(RAdeg, DECdeg, z_CMB):
 def main(model, err_floor, prefix):
     print(model, err_floor, prefix)
     err_floor_int = int(err_floor*100)
-    RESULTS_DIR = './results_mw_reddening'
+    RESULTS_DIR = './results_mw_reddening_mcmc'
     JLA_FIT_DIR = os.path.join(RESULTS_DIR, 'jla_{}_{:02d}/'.format(model, err_floor_int))
     CSP_FIT_DIR = os.path.join(RESULTS_DIR, 'csp_{}_{:02d}/'.format(model, err_floor_int))
     PS_FIT_DIR = os.path.join(RESULTS_DIR, 'ps_{}_{:02d}/'.format(model, err_floor_int))
     
     MODEL = sncosmo.Model(source=model)
-    OUT_PATH = prefix + 'mw_dered_jla+csp+ps_{}_{:02d}.pkl'.format(model, err_floor_int)
+    OUT_PATH = prefix + 'mw_dered_mcmc_jla+csp+ps_{}_{:02d}.pkl'.format(model, err_floor_int)
     
     # Read pickle files from fits
     fits = {}
