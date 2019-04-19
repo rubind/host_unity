@@ -30,7 +30,9 @@ def calc_mbstar(model, coefs, z):
     model.set(**dict(zip(model.source.param_names, coefs)))
     model.set(z=0)
     model.set(t0=0)
-    return model.bandmag(band='bessellb', time=0, magsys='ab')
+    mag = model.bandmag(band='bessellb', time=0, magsys='ab')
+    return mag
+    
 
 
 def radectoxyz(RAdeg, DECdeg):
@@ -193,6 +195,11 @@ def main(model, err_floor, prefix):
     
     # Convert c0 to mb
     data['mbstar'] = [calc_mbstar(MODEL, x['parameters'][2:], x['zhel']) for _, x in data.iterrows()]
+    
+    # Drop nans
+    print('N_sne before NaN cut:', len(data))
+    data = data.dropna(subset=['mbstar'])
+    print('N_sne after NaN cut:', len(data))
             
     # Convert observed parameters into an array
     obs_data = np.hstack([np.array([[x] for x in data.mbstar.values]),
