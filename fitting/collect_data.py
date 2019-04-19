@@ -30,7 +30,7 @@ def calc_mbstar(model, coefs, z):
     model.set(**dict(zip(model.source.param_names, coefs)))
     model.set(z=0)
     model.set(t0=0)
-    return model.bandmag(band='bessellv', time=0, magsys='ab')
+    return model.bandmag(band='bessellb', time=0, magsys='ab')
 
 
 def radectoxyz(RAdeg, DECdeg):
