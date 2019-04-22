@@ -12,6 +12,7 @@ from astropy import units as u
 from astropy.io import ascii
 from astropy.coordinates import SkyCoord
 from scipy.linalg import block_diag
+from IPython import embed
 
 
 def calc_mbstar(model, coefs, z):
@@ -183,6 +184,7 @@ def main(model, err_floor, prefix):
                 combined_ps['host_source'].append('DJ')
     combined_ps = pd.DataFrame(combined_ps)
     combined_ps = combined_ps.set_index('SN')
+    ps_meta = ps_meta.drop(['x_1', 'c', 'm_B'], axis=1)
     combined_ps = combined_ps.merge(ps_meta, left_index=True, right_index=True)
     combined_ps['set'] = [jla.set.max()+2 for x in combined_ps.index]
     
