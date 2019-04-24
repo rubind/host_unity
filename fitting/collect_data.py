@@ -243,6 +243,6 @@ def main(model, err_floor, prefix):
     
     # Dump to pickle file
     pickle.dump(stan_data, open(OUT_PATH, 'wb'))
-    
+
 if __name__=='__main__':
     main()
