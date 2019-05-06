@@ -38,7 +38,7 @@ def plot(file_name, data_type, kde=True):
 
     Parameters
     ----------
-    file_name: string or tuple of strings
+    file_name: tuple of strings
         This is the string to the UNITY output file. If a tuple is passed, then 
     data_type: string
         This defines what standardization coefficients should label the
@@ -53,22 +53,24 @@ def plot(file_name, data_type, kde=True):
             # plot_labels = ['M$_B$', '$\sigma_{intrinsic}$', 'color', 'c1', 'c2', 'c3',
                       # 'c4', 'c5', 'c6', 'mass', 'outl_frac']
             plot_labels = ['M$_B$', '$\sigma_{intrinsic}$', r'$\beta$', r'$\alpha_1$', r'$\alpha_2$', r'$\alpha_3$',
-                      r'$\alpha_4$', r'$\alpha_5$', r'$\alpha_6$', r'$\delta$', r'$f^{outl}$']
+                      r'$\alpha_4$', r'$\alpha_5$', r'$\alpha_6$', r'$\gamma$', r'$f^{outl}$']
             truths = [None, None, None, 0, 0, 0, 0, 0, 0, 0, 0]
         if data_type == 'salt+m':
-            plot_labels = ['M$_B$', '$\sigma_{intrinsic}$', r'$\alpha$', r'$\beta$', r'$\delta$', r'$f^{outl}$']
+            plot_labels = ['M$_B$', '$\sigma_{intrinsic}$', r'$\alpha$', r'$\beta$', r'$\gamma$', r'$f^{outl}$']
             truths = [None, None, None, None, 0, 0]
     # truths=[None, 0, -0.14, 3.2, 0, 0, 0, None],   # Campbell data
     # labels=['M$_B$', '$\sigma_{intrinsic}$', r'$\alpha$', r'$\beta$', 'mass', 'local age', 'global age', 'outl_frac'],      # Campbell
     
 
-    if type(file_name) == tuple:
+    if len(file_name) > 1:
         data_sets = [collect_plot_params(pickle.load(gzip.open(f, 'rb'))) for f in file_name]
-        FIG_NAME = file_name[:-9] + '_and_others'
+        FIG_NAME = file_name[0][:-9] + '_and_others'
+        contours = [0.0455003]
     else:
-        fit_params = pickle.load(gzip.open(file_name, 'rb'))
+        fit_params = pickle.load(gzip.open(file_name[0], 'rb'))
         data_sets = [collect_plot_params(fit_params)]
-        FIG_NAME = file_name[:-9]
+        FIG_NAME = file_name[0][:-9]
+        contours = [0.317311, 0.0455003]
     
 
 
@@ -76,7 +78,7 @@ def plot(file_name, data_type, kde=True):
     if kde:
         # fig = kde_corner.kde_corner([ 1.4*params_to_plot, params_to_plot, 0.7*params_to_plot], labels=plot_labels, contours = [0.0455003])
         # fig = kde_corner.kde_corner(params_to_plot, labels=plot_labels)
-        fig = kde_corner.kde_corner(data_sets, labels=plot_labels, contours = [0.0455003])
+        fig = kde_corner.kde_corner(data_sets, labels=plot_labels, contours = contours)
     else:
         # plot with corner.py, this only works for 1 data set.
         raise RuntimeWarning('corner.py can only plot one dataset.')

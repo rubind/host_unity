@@ -40,13 +40,13 @@ def plot(data, params, kde):
     Specifying no [DATA] will plot the last modified output file.
 
     """
-    print('cli gets ', data)
+    # print('cli gets ', data)
     # passing no variadic argument passes an empty tuple. 
     if not data:
         latest = ('', 0)
         for output in Path('.').glob('*_fitparams.gzip.pkl'):
             if output.stat().st_mtime > latest[1]:
                 latest = (output, output.stat().st_mtime)
-        plot_stan.plot(str(latest[0]), params, kde)
+        plot_stan.plot((str(latest[0]),), params, kde)
     else:
         plot_stan.plot(data, params, kde)
