@@ -111,14 +111,6 @@ def save(fit, data_name=''):
     # pickle.dump(fit, gzip.open(f'Unity_{name}_gzip_fit.pickle', 'wb'))
     # print('Inits: ', fit.get_inits())
 
-    # https://stackoverflow.com/questions/12517451/automatically-creating-directories-with-file-output
-    #update to use pathlib, or this is no longer needed?
-    if not path.exists('fits/'):
-        try:
-            makedirs('fits/')
-        except OSError as exc:    # Guard against race condition
-            raise exc
-
     # save simple first, then more and more complicated ways
     with open(CWD/f'{data_name}_results.txt', 'w') as text_file:
         print(fit, file=text_file)
