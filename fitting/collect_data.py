@@ -86,7 +86,7 @@ def main(model, err_floor, prefix):
     else:
         n_props = 4
     MODEL = sncosmo.Model(source=model)
-    OUT_PATH = prefix + 'mw_dered_mcmc_jla+csp+ps_{}_{:02d}.pkl'.format(model, err_floor_int)
+    OUT_PATH = prefix + '{}_{:02d}.pkl'.format(model, err_floor_int)
     
     # Read pickle files from fits
     fits = {}
@@ -128,7 +128,6 @@ def main(model, err_floor, prefix):
     csp_meta['DEC_deg'] = csp_meta.apply(lambda x: SkyCoord(x.RA, x.DEC,
                                                             unit=(u.hourangle, u.degree)).dec.degree, axis=1)
     csp_meta['zcmb'] = csp_meta.apply(lambda x: get_zCMB(x.RA_deg, x.DEC_deg, x.zhelio), axis=1)
-    csp_sne = csp_meta.index
     
     jones_csp_host = sncosmo.read_snana_ascii('CSP_lcparams.dat', default_tablename='SN')[1]['SN'].to_pandas()
     jones_csp_host = jones_csp_host.set_index('CID')
@@ -136,7 +135,7 @@ def main(model, err_floor, prefix):
     gupta_host = gupta_host.set_index('name')
     
     combined_csp = defaultdict(list)
-    for sn in csp_sne:
+    for sn in csp_meta.index:
         match_rg = gupta_host[gupta_host.index.str.contains(sn)]
         if len(match_rg)==1:
             combined_csp['SN'].append(sn)
@@ -161,6 +160,7 @@ def main(model, err_floor, prefix):
     ps_data = pd.read_csv('/home/samdixon/foundation_photometry.txt', delimiter=', ', engine='python')
     ps_meta = ascii.read('/home/samdixon/foundation_lc_params.tex', format='latex').to_pandas()
     ps_meta = ps_meta.set_index('SN')
+    ps_meta.index = ps_meta.index.str.upper()
     ps_meta['zcmb'] = [float(x.split()[0]) for x in ps_meta['z_CMB'].values]
     ps_meta['zhel'] = [float(x.split()[0]) for x in ps_meta['z_helio'].values]
     
@@ -202,7 +202,17 @@ def main(model, err_floor, prefix):
     print('N_sne before NaN cut:', len(data))
     data = data.dropna(subset=['mbstar'])
     print('N_sne after NaN cut:', len(data))
-            
+    
+    # Remove duplicates/aliased objects
+    count = {}
+    for sn_name in data.index:
+        try:
+            count[sn_name.lower()] += 1
+        except KeyError:
+            count[sn_name.lower()] = 1
+    duplicates = [k for k, v in count.items() if v > 1]
+    data = data.drop(duplicates)
+                
     # Convert observed parameters into an array
     obs_data = np.hstack([np.array([[x] for x in data.mbstar.values]),
                           np.array([x[3:-2] for x in data.parameters.values]),
@@ -243,6 +253,10 @@ def main(model, err_floor, prefix):
     
     # Dump to pickle file
     pickle.dump(stan_data, open(OUT_PATH, 'wb'))
+    
+    # Dump host source attributions
+    full_data_out_path = prefix + 'full_data_{}_{:02d}.csv'.format(model, err_floor_int)
+    data.to_csv(full_data_out_path)
 
 if __name__=='__main__':
     main()
