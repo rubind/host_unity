@@ -9,10 +9,13 @@ from astropy.io import ascii
 from astropy.table import Table
 
 DATA = pd.read_csv('/home/samdixon/foundation_photometry.txt', delimiter=', ', engine='python')
+
 META = ascii.read('/home/samdixon/foundation_lc_params.tex', format='latex').to_pandas()
 META = META.set_index('SN')
+
 HOSTDATA = pd.read_csv('/home/samdixon/host_unity/fitting/gupta_host.txt', delim_whitespace=True)
 HOSTDATA = HOSTDATA.set_index('name')
+HOSTDATA.index = [name.replace('_', '-') if name[:6]=='ASASSN' else name for name in HOSTDATA.index]
 
 SCRIPT_DIR = 'scripts'
 if not os.path.isdir(SCRIPT_DIR):
@@ -43,8 +46,13 @@ def read_and_register(name):
 def get_foundation_lc(sn_name):
     sn_data = DATA[DATA['SN'] == sn_name]
     meta_data = META.loc[sn_name]
-    host = HOSTDATA[HOSTDATA.index.str.contains(sn_name)]
-    mwebv = host['MW_EBV'][0]
+    try:
+        host = HOSTDATA[HOSTDATA.index.str.contains(sn_name)]
+        mwebv = host['MW_EBV'][0]
+    except IndexError:
+        print('no MW EBV value found. Assuming 0.')
+        sys.stdout.flush()
+        mwebv = 0
     meta = {'name': sn_name,
             'z': float(meta_data['z_helio'].split()[0]),
             't0': float(meta_data['Peak_MJD'].split()[0]),
