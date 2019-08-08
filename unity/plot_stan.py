@@ -17,7 +17,7 @@ def collect_plot_params(fit_params):
     params_to_plot = []
     labels = []
     
-    for param in ["MB", "sigma_int", "coeff", "outl_frac"]:
+    for param in ["MB", "sigma_int", "coeff"]:
         if len(fit_params[param].shape) == 1:
             params_to_plot.append(fit_params[param])
             labels.append(param)
@@ -32,8 +32,8 @@ def collect_plot_params(fit_params):
     return params_to_plot
 
 
-def plot(file_name, data_type, kde=True):
-    # type: (Union(string, tuple), string) -> None
+def plot(file_name, data_type, ax_limits=[], kde=True):
+    # type: (Union(string, tuple), string, list, bool) -> None
     """Make a corner plot of the UNITY output data.
 
     Parameters
@@ -46,21 +46,21 @@ def plot(file_name, data_type, kde=True):
     """
     print('Plotting ', file_name)
 
-    if not data_type in ['snemo', 'salt', 'snemo+m', 'salt+m']:
+    if not data_type in ['snemo', 'salt', 'snemo+m', 'salt+m', 'snemo2+m']:
         sys.exit('Model not specified')
     else:
         if data_type == 'snemo+m':
-            # plot_labels = ['M$_B$', '$\sigma_{intrinsic}$', 'color', 'c1', 'c2', 'c3',
-                      # 'c4', 'c5', 'c6', 'mass', 'outl_frac']
-            plot_labels = ['M$_B$', '$\sigma_{intrinsic}$', r'$\beta$', r'$\alpha_1$', r'$\alpha_2$', r'$\alpha_3$',
-                      r'$\alpha_4$', r'$\alpha_5$', r'$\alpha_6$', r'$\gamma$', r'$f^{outl}$']
-            truths = [None, None, None, 0, 0, 0, 0, 0, 0, 0, 0]
+            plot_labels = ['M$_B$', '$\sigma_{intrinsic}$', r'$\beta$', r'$\alpha_1$', 
+                           r'$\alpha_2$', r'$\alpha_3$', r'$\alpha_4$', r'$\alpha_5$',
+                           r'$\alpha_6$', r'$\gamma$']
+            truths = [None, None, None, 0, 0, 0, 0, 0, 0, 0]
         if data_type == 'salt+m':
-            plot_labels = ['M$_B$', '$\sigma_{intrinsic}$', r'$\alpha$', r'$\beta$', r'$\gamma$', r'$f^{outl}$']
-            truths = [None, None, None, None, 0, 0]
-    # truths=[None, 0, -0.14, 3.2, 0, 0, 0, None],   # Campbell data
-    # labels=['M$_B$', '$\sigma_{intrinsic}$', r'$\alpha$', r'$\beta$', 'mass', 'local age', 'global age', 'outl_frac'],      # Campbell
-    
+            plot_labels = ['M$_B$', '$\sigma_{intrinsic}$', r'$\alpha$', r'$\beta$', r'$\gamma$']
+            truths = [None, None, None, None, 0]
+        if data_type == 'snemo2+m':
+            plot_labels = ['M$_B$', '$\sigma_{intrinsic}$', r'$\beta$', r'$\alpha_1$',
+                           r'$\gamma$']
+            truths = [None, None, None, 0, 0]    
 
     if len(file_name) > 1:
         data_sets = [collect_plot_params(pickle.load(gzip.open(f, 'rb'))) for f in file_name]
@@ -78,7 +78,8 @@ def plot(file_name, data_type, kde=True):
     if kde:
         # fig = kde_corner.kde_corner([ 1.4*params_to_plot, params_to_plot, 0.7*params_to_plot], labels=plot_labels, contours = [0.0455003])
         # fig = kde_corner.kde_corner(params_to_plot, labels=plot_labels)
-        fig = kde_corner.kde_corner(data_sets, labels=plot_labels, contours = contours)
+        fig = kde_corner.kde_corner(data_sets, labels=plot_labels, contours=contours,
+                                    ax_limits=ax_limits)
     else:
         # plot with corner.py, this only works for 1 data set.
         raise RuntimeWarning('corner.py can only plot one dataset.')

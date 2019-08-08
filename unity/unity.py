@@ -16,7 +16,7 @@ UNITY_DIR = Path(__file__).resolve().parent
 # todo if the datasets are stored in another directory, how do we just
 # get the file name to store matching fit files?
 #TODO type annotate and add doc strings
-def run(model, data, steps, chains, interactive):
+def run(model, data, steps, chains, interactive, max_cores=1):
     """
     Parameters:
         model (str):
@@ -32,6 +32,8 @@ def run(model, data, steps, chains, interactive):
         interactive (bool):
             A flag to determing if you should jump into a pdb debugging sessions to
             interactively explore the space after the model has been fit.
+
+        max_cores (int):
         
     Returns:
     """
@@ -47,10 +49,32 @@ def run(model, data, steps, chains, interactive):
     for key in stan_data:
         if np.isnan(stan_data[key]).any() or np.isinf(stan_data[key]).any():
             sys.exit(f"{key} contains an infinity or NaN value.")
-    fit = sm.sampling(data=stan_data, iter=steps, chains=chains)
-    print(fit)    # before all else, print to screen.
+    # Why these setting?
+    #
+    # * Using `n_jobs=1` so that the chains run in series not parallel.
+    # There is a bug in multiprocess and/or pickle. There is a signed integer 32-bit array limit
+    # Looks like Python 3.8 might have a patch for this.
+    # Other patches could be Python 3.9 where they are changing pickle, multiprocessing and the GIL more
+    # Or pystan could check before sampling if they will get an array that is too long.
+    # This is currently not done in pystan 2.19.0.0.
+    # Failures occur with `stan_code_simple_debug.txt` and N_SN = 142. Seems to work with N < 100
+    # CHANGE! when Python fixes limit.
+    #
+    # * Using `par` to only save the data we need for the paper.
+    # This is because with N > 194 (was ok with N = 142) the file size is too large for pickle. Maybe?
+    # Todo(make pars be user definable, but default to what is below.)
+    fit = sm.sampling(data=stan_data, iter=steps, chains=chains, n_jobs=max_cores,
+                      pars=['MB', 'coeff_angles', 'sigma_int', 'outl_frac', 'coeff', 'outl_loglike'])
     #TODO update to use pathlib
     save(fit, path.splitext(path.basename(data))[0])
+
+    # Got a strange error: multiprocessing.pool.MaybeEncodingError: Error sending result: '[(0, <stanfit4anon_model_5d703b856fa2f28cab8159e4abe012f4_8855281629809236605.PyStanHolder object at 0x1320cb730>)]'. Reason: 'error("'i' format requires -2147483648 <= number <= 2147483647")'
+    # now changing it to a warning and skipping printing summary.
+    try:
+        print(fit)    # before all else, print to screen.
+    except MaybeEncodingError as e:
+        print("An error occurred.\n", e, "\n\nNo summary available.")
+
     if interactive:
         import pdb; pdb.set_trace()    # noqa: E702
     return fit
@@ -98,7 +122,8 @@ def load(stan_model: Path, data: Path) -> (pystan.StanModel, dict):
     except:    # noqa: E722
         sm = compile(stan_model)
 
-    stan_data = pickle.load(open(data, 'rb'))
+    with open(data, 'rb') as f:
+        stan_data = pickle.load(f)
 
     return sm, stan_data
 
@@ -111,20 +136,11 @@ def save(fit, data_name=''):
     # pickle.dump(fit, gzip.open(f'Unity_{name}_gzip_fit.pickle', 'wb'))
     # print('Inits: ', fit.get_inits())
 
-    # save simple first, then more and more complicated ways
-    with open(CWD/f'{data_name}_results.txt', 'w') as text_file:
-        print(fit, file=text_file)
+    # SAVE RAW DATA FIRST! It takes less processing and less possibilities to fail.
     # TODO: update to use a context manager, `with`
     pickle.dump(fit.extract(permuted=True), gzip.open(CWD/f'{data_name}_fitparams.gzip.pkl', 'wb'))
-
-
-if __name__ == '__main__':
-    # note that these defaults are for debugging and not suitable for good fits.
-    print('RUNINNG DEFAULT DATASET!\n\n')
-    model = UNITY_DIR/'stan_code_simple.txt'
-    data = UNITY_DIR/'sample_obs_100SNe'
-    steps = 500
-    chains = 4
-    interactive = False
-    run(model, data, steps, chains, interactive)
-    print('\n\nDEFAULT TEST DATASET USED!')
+    with open(CWD/f'{data_name}_results.txt', 'w') as text_file:
+        try:
+            print(fit, file=text_file)
+        except MaybeEncodingError as e:
+            print("An error occurred.\n", e, "\n\nNo summary available.", file=text_file)
