@@ -7,6 +7,8 @@ import toml
 
 file_name = Path(sys.argv[1])
 uncert_cut = float(sys.argv[2])
+snemo_version = int(sys.argv[3])
+mass_index = snemo_version + 1
 file_directory = Path.cwd()/file_name.parent
 
 
@@ -22,7 +24,7 @@ passed_cut = []
 for i, j in zip(data5['obs_mBx1c_cov'], data5['obs_mBx1c']):
     data5_index += 1
     # cuts it down to 205 objects
-    if np.all(np.sqrt(np.diag(i)[1:7]) < uncert_cut) and np.all(np.abs(j[1:7]) < 4):
+    if np.all(np.sqrt(np.diag(i)[1:snemo_version]) < uncert_cut) and np.all(np.abs(j[1:snemo_version]) < 4):
         passed_cut.append(True)
         count += 1
         # remove outliers from <2018-12-04 data
@@ -39,23 +41,23 @@ print('passed cut', sum(map(int, passed_cut)))
 
 
 # Update data file
-data2 = data5
+data2 = data5    # these are still the same object!
 
 data2['n_sne'] = count
 data2['sn_set_inds'] = data5['sn_set_inds'][passed_cut]
 data2['z_helio'] = data5['z_helio'][passed_cut]
 data2['z_CMB'] = data5['z_CMB'][passed_cut]
 data2['obs_mBx1c'] = data5['obs_mBx1c'][passed_cut]
-mean = np.mean(data2['obs_mBx1c'][:,8])
+mean = np.mean(data2['obs_mBx1c'][:,mass_index])
 print('\n\nSHIFTING MASS BY MEAN OF SMAPLE: ', mean, '\n\n')
 print('\n\nSHIFTING MASS BY MEAN OF SMAPLE: ', mean, '\n\n')
-data2['obs_mBx1c'][:,8] = data2['obs_mBx1c'][:,8] - mean
+data2['obs_mBx1c'][:,mass_index] = data2['obs_mBx1c'][:,mass_index] - mean
 print('\n\nSHIFTING MASS BY MEAN OF SMAPLE: ', mean, '\n\n')
 print('\n\nSHIFTING MASS BY MEAN OF SMAPLE: ', mean, '\n\n')
 data2['obs_mBx1c_cov'] = data5['obs_mBx1c_cov'][passed_cut]
 print('\n\nADDING 0.1 IN QUAD TO MASS COV!\n\n')
 print('\n\nADDING 0.1 IN QUAD TO MASS COV!\n\n')
-data2['obs_mBx1c_cov'][:, 8, 8] = np.sqrt(data2['obs_mBx1c_cov'][:, 8, 8]**2 + 0.1**2)
+data2['obs_mBx1c_cov'][:, mass_index, mass_index] = np.sqrt(data2['obs_mBx1c_cov'][:, mass_index, mass_index]**2 + 0.1**2)
 print('\n\nADDING 0.1 IN QUAD TO MASS COV!\n\n')
 print('\n\nADDING 0.1 IN QUAD TO MASS COV!\n\n')
 
