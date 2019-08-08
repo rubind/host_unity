@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "unity"
-version = "0.1.0"
+version = "0.1.1-alpha.2"
 description = ""
 authors = ["Benjamin Rose <brose@stsci.edu>", "David Rubin <drubin@stsci.edu>"]
 license = "MIT"
@@ -18,7 +18,7 @@ classifiers = [
 [tool.poetry.dependencies]
 python = "^3.6"
 numpy = "^1.16"
-pystan = "=2.17.1"
+pystan = "^2.17.1 =!2.18.*"
 click = "^7.0"
 pandas = "^0.24.1"
 sncosmo = {git = "https://github.com/sncosmo/sncosmo.git"}

@@ -120,3 +120,4 @@ unity/model_cache/
 *fitparams.gzip.pkl
 *results.txt
 unity/data_*/
+pip-wheel-metadata/
