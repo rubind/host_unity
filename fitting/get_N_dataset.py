@@ -12,6 +12,14 @@ from collections import Counter
 import numpy as np
 import toml
 
+prefix = ""
+data_files = [prefix + 'snemo7_00_err_lt1.0.txt', prefix + 'snemo7_00_err_lt2.0.txt',
+              prefix + 'snemo7_01_err_lt1.0.txt', prefix + 'snemo7_01_err_lt2.0.txt',
+              prefix + 'snemo7_02_err_lt1.0.txt', prefix + 'snemo7_02_err_lt2.0.txt',
+              prefix + 'snemo2_00_err_lt2.0.txt', prefix + 'snemo2_01_err_lt2.0.txt',
+              prefix + 'snemo2_02_err_lt2.0.txt']
+
+
 def get_N_dataset(meta_data, print_result=False):
     """ From a given pkl file, give the number of SN from JLA, CSP and Foundation.
 
@@ -83,12 +91,6 @@ def get_N_dataset(meta_data, print_result=False):
               f"N: {len(np.array(sn_names_passed_lc_cuts)[np.isin(data_sets_of_in_meta, 2)])}")
         print("\n")
     return N_SDSS, N_SNLS, N_LOCAL, N_HST, N_CSP, N_Foundation
-
-data_files = ['fixed_snemo7_00_err_lt1.0.txt', 'fixed_snemo7_00_err_lt2.0.txt',
-              'fixed_snemo7_01_err_lt1.0.txt', 'fixed_snemo7_01_err_lt2.0.txt',
-              'fixed_snemo7_02_err_lt1.0.txt', 'fixed_snemo7_02_err_lt2.0.txt',
-              'fixed_snemo2_00_err_lt2.0.txt', 'fixed_snemo2_01_err_lt2.0.txt',
-              'fixed_snemo2_02_err_lt2.0.txt']
 
 N_SDSS_01, N_SNLS_01, N_LOCAL_01, N_HST_01, N_CSP_01, N_Foundation_01 = get_N_dataset(data_files[0], print_result=True)
 N_SDSS_02, N_SNLS_02, N_LOCAL_02, N_HST_02, N_CSP_02, N_Foundation_02 = get_N_dataset(data_files[1], print_result=True)

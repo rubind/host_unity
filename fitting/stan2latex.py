@@ -17,17 +17,18 @@ import toml
 FIL_DIR = Path(__file__).resolve().parent
 
 # Stan parameters of interest
-FILES = [FIL_DIR / 'fixed_snemo7_00_err_lt1.0_fitparams.gzip.pkl',
-         FIL_DIR / 'fixed_snemo7_00_err_lt2.0_fitparams.gzip.pkl',
-         FIL_DIR / 'fixed_snemo7_01_err_lt1.0_fitparams.gzip.pkl', 
-         FIL_DIR / 'fixed_snemo7_01_err_lt2.0_fitparams.gzip.pkl', 
-         FIL_DIR / 'fixed_snemo7_02_err_lt1.0_fitparams.gzip.pkl',
-         FIL_DIR / 'fixed_snemo7_02_err_lt2.0_fitparams.gzip.pkl',
+prefix = ""
+FILES = [FIL_DIR / (prefix + 'snemo7_00_err_lt1.0_fitparams.gzip.pkl'),
+         FIL_DIR / (prefix + 'snemo7_00_err_lt2.0_fitparams.gzip.pkl'),
+         FIL_DIR / (prefix + 'snemo7_01_err_lt1.0_fitparams.gzip.pkl'),
+         FIL_DIR / (prefix + 'snemo7_01_err_lt2.0_fitparams.gzip.pkl'),
+         FIL_DIR / (prefix + 'snemo7_02_err_lt1.0_fitparams.gzip.pkl'),
+         FIL_DIR / (prefix + 'snemo7_02_err_lt2.0_fitparams.gzip.pkl'),
          FIL_DIR / 'salt2_00_passed_snemo7_02_fitparams.gzip.pkl',
          FIL_DIR / 'salt2_00_passed_snemo2_02_fitparams.gzip.pkl',
-         FIL_DIR / 'fixed_snemo2_00_err_lt2.0_fitparams.gzip.pkl',
-         FIL_DIR / 'fixed_snemo2_01_err_lt2.0_fitparams.gzip.pkl',
-         FIL_DIR / 'fixed_snemo2_02_err_lt2.0_fitparams.gzip.pkl']
+         FIL_DIR / (prefix + 'snemo2_00_err_lt2.0_fitparams.gzip.pkl'),
+         FIL_DIR / (prefix + 'snemo2_01_err_lt2.0_fitparams.gzip.pkl'),
+         FIL_DIR / (prefix + 'snemo2_02_err_lt2.0_fitparams.gzip.pkl')]
 FIT_PARAMS = ['MB', 'sigma_int', 'coeff', 'outl_frac']
 TABLE_NAMES = [r'M$_B$', r'$\sigma_{\rm unexplained}$', r'$\beta$', r'$\alpha_1$', r'$\alpha_2$', r'$\alpha_3$',
                r'$\alpha_4$', r'$\alpha_5$', r'$\alpha_6$', r'$\gamma$', r'$f^{outl}$']
