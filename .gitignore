@@ -118,6 +118,6 @@ Unity_model.pickle.txt
 unity/model_cache/
 # Unity output files
 *fitparams.gzip.pkl
-*results.txt
+*_err_lt2.0.pkl
 unity/data_*/
 pip-wheel-metadata/
