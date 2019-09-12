@@ -222,6 +222,7 @@ def main(model, err_floor, prefix):
     
     # Drop nans
     print('N_sne before NaN cut:', len(data))
+    print(data.index[pd.isnull(data.mbstar)])
     data = data.dropna(subset=['mbstar'])
     print('N_sne after NaN cut:', len(data))
                 
