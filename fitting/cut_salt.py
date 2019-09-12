@@ -41,7 +41,7 @@ def cut_for_salt(passed_SN, output_file="salt2_unknownsource", salt_error_model=
 
     if count != len(passed_SN):
         warnings.warn(
-            f"{count} found in pickle file, but {len(passed_SN)} passed SNEMO7 cuts.",
+            f"{count} found in pickle file, but {len(passed_SN)} passed SNEMO cuts.",
             Warning,
         )
         print("SN not in pickle file:")

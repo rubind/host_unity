@@ -1,0 +1,40 @@
+\begin{deluxetable*}{l|cccccc|c}[t]
+\tablecolumns{7}
+% \tabletypesize{\large}   %1 size larger
+\tabletypesize{\footnotesize}  %1 size smaller
+% \tablewidth{0pt}
+\tablewidth{3in}
+\tablecaption{The number of \sn analyzed, for various SNEMO light-curve fits and quality cuts.\label{tab:LcFitData}} %really a title
+\tablehead{
+    \colhead{} &
+    \colhead{CSP} & \colhead{Foundation} & \colhead{CfA} &
+    \colhead{SDSS} & \colhead{SNLS} & \colhead{HST} &
+    \colhead{Total}
+    }
+\startdata
+Total SNe & 134 & 223 & 97 & 371 & 239 & 9 & 1097\\
+Host mass avail. & 99 & 100 & 97 & 371 & 239 & 9 & 937\\
+\hline
+& & \multicolumn{4}{c}{\hspace{1em}\snemotwo} & & \\
+\textbf{No Error Model} & & & & & & \\
+\hspace{1em}$\sigma_i \leq 2$ & 99 &  99 & 89 & 325 & 198 & 9 & 819\\
+\textbf{1\% Error Model} & & & & & & \\
+\hspace{1em}$\sigma_i \leq 2$ & 99 &  99 & 97 & 371 & 239 & 9 & 914\\
+\textbf{2\% Error Model} & & & & & & \\
+\hspace{1em}$\sigma_i \leq 2$ & 99 & 99 & 97 & 371 & 239 & 9 & 914\\
+\hline
+& & \multicolumn{4}{c}{\hspace{1em}\snemoseven} & & \\
+\textbf{No Error Model} & & & & & & \\
+\hspace{1em}$\sigma_i \leq 1$ & 77 &  22 & 15 & 10 & 9 & 0 & 133\\
+\hspace{1em}$\sigma_i \leq 2$ & 81 &  41 & 35 & 17 & 17 & 0 & 191\\
+\textbf{1\% Error Model} & & & & & & \\
+\hspace{1em}$\sigma_i \leq 1$ & 61 &  8 & 2 & 7 & 0 & 0 & 78\\
+\hspace{1em}$\sigma_i \leq 2$ & 70 &  47 & 13 & 13 & 7 & 0 & 150\\
+\textbf{2\% Error Model} & & & & & & \\
+\hspace{1em}$\sigma_i \leq 1$ & 19 &  0 & 1 & 2 & 0 & 0 & 22\\
+\hspace{1em}$\sigma_i \leq 2$ & 34 &  22 & 10 & 14 & 6 & 0 & 86\\
+\enddata
+% \tablenotetext{1}{$\sigma_i$ is the uncertainty on each fit eigenvector. When $\sigma_i=1$, the uncertainty is approximately the $1\sigma$ dispersion in the population.}
+\tablecomments{$\sigma_i$ is the uncertainty on each fit eigenvector. When $\sigma_i=1$, the uncertainty is approximately the $1\sigma$ dispersion in the population. The data from the SDSS, SNLS, CfA, HST surveys were obtained via the JLA compilation \citep{Betoule2014}.}
+\end{deluxetable*}
+

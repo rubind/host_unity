@@ -29,7 +29,7 @@ fixed_snemo7_01_err_lt1.0.pkl fixed_snemo7_01_err_lt2.0.pkl \
 fixed_snemo7_02_err_lt1.0.pkl fixed_snemo7_02_err_lt2.0.pkl \
 fixed_snemo2_00_err_lt2.0.pkl fixed_snemo2_01_err_lt2.0.pkl \
 fixed_snemo2_02_err_lt2.0.pkl fixed_snemo2_01_err_lt1.0.pkl \
-salt2_00_passed_snemo7_02.pkl dataset_tab.tex ## Cut the raw data for different c_i values
+salt2_00_passed_snemo7_02.pkl dataset_tab.tex ## Cut the raw data for different sigma_i values
 
 fixed_snemo7_00_err_lt1.0.pkl: fixed_snemo7_00.pkl cut_JLA.py
 	poetry run python cut_JLA.py $< 1 7
@@ -111,7 +111,7 @@ fixed_snemo2_01_err_lt1.0_fitparams.gzip.pkl: fixed_snemo2_01_err_lt1.0.pkl
 	poetry run unity run --chains=4 --steps=$(nsteps) --model=stan_code_simple_debug.txt $<
 
 
-paper: FIG_JLA_error_floor_0-2_sigma2.pdf FIG_JLA_error_floor_1_sigma1-2.pdf salt2_00_passed_snemo7_02_fitparams.pdf FIG_SNEMO2_error_floor_0-2_sigma2.pdf salt2_00_passed_snemo2_02_fitparams.pdf results_tab.tex dataset_tab.tex ## Rebuild all the figures and tables.
+paper: FIG_JLA_error_floor_0-2_sigma2.pdf FIG_JLA_error_floor_1_sigma1-2.pdf FIG_SALT2.pdf FIG_SNEMO2_error_floor_0-2_sigma2.pdf results_tab.tex dataset_tab.tex ## Rebuild all the figures and tables.
 # remake table
 # 	poetry run python stan2latex.py
 
@@ -119,7 +119,7 @@ paper: FIG_JLA_error_floor_0-2_sigma2.pdf FIG_JLA_error_floor_1_sigma1-2.pdf sal
 FIG_JLA_error_floor_0-2_sigma2.pdf: fixed_snemo7_02_err_lt2.0_fitparams.gzip.pkl \
 fixed_snemo7_01_err_lt2.0_fitparams.gzip.pkl fixed_snemo7_00_err_lt2.0_fitparams.gzip.pkl
 	poetry run unity plot \
-		--axlimits='-20.05 -18.95 0.03 0.21 -0.1 2.1 -0.55 0.55 -0.55 0.55 -0.55 0.55 -0.55 0.55 -0.55 0.55 -0.55 0.55 -0.55 0.55' \
+		--axlimits='-20.05 -18.95 0.03 0.21 -0.1 2.1 -0.3 0.3 -0.3 0.3 -0.3 0.3 -0.3 0.3 -0.3 0.3 -0.3 0.3 -0.3 0.3' \
 		fixed_snemo7_02_err_lt2.0_fitparams.gzip.pkl fixed_snemo7_01_err_lt2.0_fitparams.gzip.pkl \
 		fixed_snemo7_00_err_lt2.0_fitparams.gzip.pkl
 	mv 'fixed_snemo7_02_err_lt2.0_fitparams_and_others.pdf' 'FIG_JLA_error_floor_0-2_sigma2.pdf'
@@ -127,35 +127,36 @@ fixed_snemo7_01_err_lt2.0_fitparams.gzip.pkl fixed_snemo7_00_err_lt2.0_fitparams
 FIG_JLA_error_floor_1_sigma1-2.pdf: fixed_snemo7_01_err_lt2.0_fitparams.gzip.pkl \
 fixed_snemo7_01_err_lt1.0_fitparams.gzip.pkl
 	poetry run unity plot \
-	--axlimits='-20.05 -18.95 0.03 0.21 -0.1 2.1 -0.55 0.55 -0.55 0.55 -0.55 0.55 -0.55 0.55 -0.55 0.55 -0.55 0.55 -0.55 0.55' \
+	--axlimits='-20.05 -18.95 0.03 0.21 -0.1 2.1 -0.3 0.3 -0.3 0.3 -0.3 0.3 -0.3 0.3 -0.3 0.3 -0.3 0.3 -0.3 0.3' \
 	fixed_snemo7_01_err_lt2.0_fitparams.gzip.pkl fixed_snemo7_01_err_lt1.0_fitparams.gzip.pkl
 	mv 'fixed_snemo7_01_err_lt2.0_fitparams_and_others.pdf' 'FIG_JLA_error_floor_1_sigma1-2.pdf'
 
-salt2_00_passed_snemo7_02_fitparams.pdf: salt2_00_passed_snemo7_02_fitparams.gzip.pkl
-	poetry run unity plot --params=salt+m \
-		--axlimits='-19.24 -19.15 0.1 0.18 -0.17 -0.085 2.6 3.4 -0.155 0.08' \
-		salt2_00_passed_snemo7_02_fitparams.gzip.pkl
+# salt2_00_passed_snemo7_02_fitparams.pdf: salt2_00_passed_snemo7_02_fitparams.gzip.pkl
+# 	poetry run unity plot --params=salt+m \
+# 		--axlimits='-19.24 -19.15 0.1 0.18 -0.17 -0.085 2.6 3.4 -0.155 0.08' \
+# 		salt2_00_passed_snemo7_02_fitparams.gzip.pkl
 
-salt2_00_passed_snemo2_02_fitparams.pdf: salt2_00_passed_snemo2_02_fitparams.gzip.pkl
+FIG_SALT2.pdf: salt2_00_passed_snemo7_02_fitparams.gzip.pkl salt2_00_passed_snemo2_02_fitparams.gzip.pkl
 	poetry run unity plot --params=salt+m \
-		--axlimits='-19.24 -19.15 0.1 0.18 -0.17 -0.085 2.6 3.4 -0.155 0.08' \
-		salt2_00_passed_snemo2_02_fitparams.gzip.pkl
+		--axlimits='-19.24 -19.1 0.09 0.18 -0.17 -0.085 2.6 3.4 -0.155 0.08' \
+		salt2_00_passed_snemo7_02_fitparams.gzip.pkl salt2_00_passed_snemo2_02_fitparams.gzip.pkl
+	mv 'salt2_00_passed_snemo7_02_fitparams_and_others.pdf' 'FIG_SALT2.pdf'
 
 FIG_SNEMO2_error_floor_0-2_sigma2.pdf: fixed_snemo2_02_err_lt2.0_fitparams.gzip.pkl \
 fixed_snemo2_01_err_lt2.0_fitparams.gzip.pkl fixed_snemo2_00_err_lt2.0_fitparams.gzip.pkl
 	poetry run unity plot --params=snemo2+m \
-		--axlimits='-19.51 -19.39 0.06 0.16 0.7 1.1 0.01 0.09 -0.15 0.02' \
+		--axlimits='-19.51 -19.39 0.06 0.16 0.7 1.2 0.005 0.07 -0.12 0.04' \
 		fixed_snemo2_02_err_lt2.0_fitparams.gzip.pkl fixed_snemo2_01_err_lt2.0_fitparams.gzip.pkl \
 		fixed_snemo2_00_err_lt2.0_fitparams.gzip.pkl
 	mv 'fixed_snemo2_02_err_lt2.0_fitparams_and_others.pdf' 'FIG_SNEMO2_error_floor_0-2_sigma2.pdf'
 
 
 # updates on stan2latex.py and run
-results_tab.tex: stan2latex.py \
+results_tab_snemo7.tex results_tab_snemo2.tex: stan2latex.py \
 fixed_snemo7_00_err_lt1.0_fitparams.gzip.pkl fixed_snemo7_00_err_lt2.0_fitparams.gzip.pkl \
 fixed_snemo7_01_err_lt1.0_fitparams.gzip.pkl fixed_snemo7_01_err_lt2.0_fitparams.gzip.pkl \
 fixed_snemo7_02_err_lt1.0_fitparams.gzip.pkl fixed_snemo7_02_err_lt2.0_fitparams.gzip.pkl \
-salt2_00_passed_snemo7_02_fitparams.gzip.pkl \
+salt2_00_passed_snemo7_02_fitparams.gzip.pkl salt2_00_passed_snemo2_02_fitparams.gzip.pkl\
 fixed_snemo2_00_err_lt2.0_fitparams.gzip.pkl fixed_snemo2_01_err_lt2.0_fitparams.gzip.pkl \
 fixed_snemo2_02_err_lt2.0_fitparams.gzip.pkl fixed_snemo2_01_err_lt1.0_fitparams.gzip.pkl
 	poetry run python stan2latex.py
@@ -163,11 +164,12 @@ fixed_snemo2_02_err_lt2.0_fitparams.gzip.pkl fixed_snemo2_01_err_lt1.0_fitparams
 upload: paper  ## Copy some of the files to Dropbox folder for Overleaf.
 	cp FIG_JLA_error_floor_0-2_sigma2.pdf ~/Dropbox/Apps/ShareLaTeX/SNEMO\ and\ Unity/FIG_JLA_error_floor_0-2_sigma2.pdf
 	cp FIG_JLA_error_floor_1_sigma1-2.pdf ~/Dropbox/Apps/ShareLaTeX/SNEMO\ and\ Unity/FIG_JLA_error_floor_1_sigma1-2.pdf
-	cp salt2_00_passed_snemo7_02_fitparams.pdf ~/Dropbox/Apps/ShareLaTeX/SNEMO\ and\ Unity/salt2_00_passed_snemo7_02_fitparams.pdf
-	cp salt2_00_passed_snemo2_02_fitparams.pdf ~/Dropbox/Apps/ShareLaTeX/SNEMO\ and\ Unity/salt2_00_passed_snemo2_02_fitparams.pdf
+	cp FIG_SALT2.pdf ~/Dropbox/Apps/ShareLaTeX/SNEMO\ and\ Unity/FIG_SALT2.pdf
 	cp FIG_SNEMO2_error_floor_0-2_sigma2.pdf ~/Dropbox/Apps/ShareLaTeX/SNEMO\ and\ Unity/FIG_SNEMO2_error_floor_0-2_sigma2.pdf
-	cp results_tab.tex ~/Dropbox/Apps/ShareLaTeX/SNEMO\ and\ Unity/results_tab.tex
 	cp dataset_tab.tex ~/Dropbox/Apps/ShareLaTeX/SNEMO\ and\ Unity/dataset_tab.tex
+	cp results_tab_snemo2.tex ~/Dropbox/Apps/ShareLaTeX/SNEMO\ and\ Unity/results_tab_snemo2.tex	
+	cp results_tab_snemo7.tex ~/Dropbox/Apps/ShareLaTeX/SNEMO\ and\ Unity/results_tab_snemo7.tex
+
 
 
 clean-cut:

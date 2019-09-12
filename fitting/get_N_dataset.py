@@ -117,7 +117,7 @@ Table_heaer = r'''\begin{deluxetable*}{l|cccccc|c}[t]
 \tabletypesize{\footnotesize}  %1 size smaller
 % \tablewidth{0pt}
 \tablewidth{3in}
-\tablecaption{The number of \sn analyzed, for various SNEMO light-curve fits and quality cuts.\label{tab:LcFitData}} %really a title
+\tablecaption{Number of \sn passing quality cuts from various SNEMO models.\label{tab:LcFitData}} %really a title
 \tablehead{
     \colhead{} &
     \colhead{CSP} & \colhead{Foundation} & \colhead{CfA} &
@@ -156,7 +156,7 @@ Table_data = f'''\\hspace{{1em}}$\\sigma_i \\leq 2$ & {N_CSP_s02} &  {N_Foundati
 # '''
 Table_footer = r'''\enddata
 % \tablenotetext{1}{$\sigma_i$ is the uncertainty on each fit eigenvector. When $\sigma_i=1$, the uncertainty is approximately the $1\sigma$ dispersion in the population.}
-\tablecomments{$\sigma_i$ is the uncertainty on each fit eigenvector. When $\sigma_i=1$, the uncertainty is approximately the $1\sigma$ dispersion in the population. The data from the SDSS, SNLS, CfA, HST surveys were obtained via the JLA compilation \citep{Betoule2014}.}
+\tablecomments{$\sigma_i$ is the uncertainty on each fit eigenvector. When $\sigma_i=1$, the uncertainty is approximately the $1\sigma$ dispersion in the population. The data from the CfA, SDSS, SNLS, and HST surveys were obtained via the JLA compilation \citep{Betoule2014}.}
 \end{deluxetable*}
 '''
 with open('dataset_tab.tex', 'w') as f:

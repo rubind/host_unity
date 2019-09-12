@@ -1,0 +1,30 @@
+\begin{deluxetable*}{c||c||ccc}[t]
+\tablecolumns{5}
+% \rotate
+% \tabletypesize{\large}   %1 size larger
+\tabletypesize{\footnotesize}  %1 size smaller
+\tablewidth{0pt}
+\tablecaption{Parameter estimation results from \unity for \sn that passed \snemotwo quality cuts.\label{tab:snemo2results}} %really a title
+\tablehead{
+    \colhead{} &
+    \colhead{\salt} &
+    \multicolumn{3}{c}{\snemotwo} & 
+    \multicolumn{6}{c}{\snemoseven}
+    \\ 
+    \cline{4-4}
+    \colhead{\% Error Model}
+    & \colhead{} &
+    \colhead{0} & \colhead{1} & \colhead{2} &
+    }
+\startdata
+Data set size & 800 & 819 & 914 & 914 \\ \hline
+M$_B$  & $-19.2^{+0.01}_{-0.01}$                      & $-19.4^{+0.01}_{-0.01}$                      & $-19.5^{+0.01}_{-0.01}$                      & $-19.5^{+0.01}_{-0.01}$                  \\
+$\sigma_{\rm unexplained}$  & $0.117^{+0.006}_{-0.006}$ & $0.130^{+0.008}_{-0.007}$ & $0.12^{+0.0072}_{-0.0069}$ & $0.10^{+0.0081}_{-0.008}$ \\
+$\beta$  & $2.85^{+0.07}_{-0.07}$  & $0.90^{+0.03}_{-0.03}$  & $0.938^{+0.028}_{-0.033}$  & $0.945^{+0.036}_{-0.008}$ \\
+$\alpha_1$  & $-0.130^{+0.006}_{-0.006}$  & $0.038^{+0.007}_{-0.006}$  & $0.039^{+0.007}_{-0.007}$  & $0.038^{+0.008}_{-0.039}$ \\
+$\gamma$  & $-0.04^{+0.01}_{-0.01}$  & $-0.033^{+0.015}_{-0.015}$  & $-0.040^{+0.014}_{-0.014}$  & $-0.038^{+0.015}_{-0.015}$ \\
+No. of outliers & 16 (2.0\%) & 23 (2.8\%) & 23 (2.5\%) & 27 (3.0\%) \\
+
+\enddata
+	ablecomments{The \sn used in the \salt analysis are the ones that passed the $\sigma_i \leq 2$ for \snemoseven with no error model. The ``No. of outliers'' is reported both as an absolute number and a percent of the data set.}
+\end{deluxetable*}
