@@ -13,6 +13,10 @@ import warnings
 import numpy as np
 import toml
 
+prefix = ""
+PASSED_SNEMO7 = passed_data(prefix + "snemo7_00_err_lt2.0.txt")
+PASSED_SNEMO2 = passed_data(prefix + "snemo2_00_err_lt2.0.txt")
+
 # list of SN names that passed SNEMO 0% error floor and sigma_i <= 2 cuts.
 def passed_data(file):
     passed_snemo7_file = Path(file)
@@ -80,9 +84,6 @@ def cut_for_salt(passed_SN, output_file="salt2_unknownsource", salt_error_model=
     with open(f"{output_file}.txt", "w") as f:
         print(toml.dumps({"count": count, "names": data["names"][passed_cut]}), file=f)
 
-
-PASSED_SNEMO7 = passed_data("fixed_snemo7_00_err_lt2.0.txt")
-PASSED_SNEMO2 = passed_data("fixed_snemo2_00_err_lt2.0.txt")
 
 cut_for_salt(PASSED_SNEMO7, "salt2_00_passed_snemo7_02")
 cut_for_salt(PASSED_SNEMO2, "salt2_00_passed_snemo2_02")
