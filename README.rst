@@ -2,90 +2,61 @@
 Unity with Host Galaxy Properties
 #################################
 
-This project is an adaption of UNITY_ to standardize Type Ia supernovae with the addition of a full treatment of host properties as seen is needed in Rose et al. 2019.
+This project is an adaption of UNITY_ that allows for standardization of Type Ia supernovae with the addition of a full treatment of host properties.
 
 .. _UNITY: https://github.com/rubind/UNITY_v1
 
-How to install the project
-==========================
 
-I can't run it either so don't feel bad, but it will run with Python 3!
+Installing UNITY
+================
 
-With the package on your computer, download latest from Github here, install from that directory with 
-:command:`pip install .`
+This application is maintained via via Poetry_ and the ``pyproject.toml`` file. Its depends on Python 3 (tested with 3.7) and most of the typical scientific software stack_.
 
-If you are wanting to adapt the model yourself, you may want to install with the ``-e`` flag.
+.. _Poetry: https://poetry.eustace.io
+.. _stack: https://github.com/rubind/host_unity/blob/master/pyproject.toml#L18
 
-if there is a ``ImportError: Python is not installed as a framework.`` error, this is likely fixed by creating a ``file ~/.matplotlib/matplotlibrc`` there and add the following code: ``backend: TkAgg``
+The latest instructions to Install Poetry are avaialble via its documentation_. It should be something like ``curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python``
+
+.. _documentation: https://poetry.eustace.io/docs/
+
+With this package on your computer (latest from GitHub_), Poetry installed, and any desired virtual environments activated, install UNITY via 
+:command:``poetry install``. By default, this will also include the development dependencies.
+
+.. _GitHub: https://github.com/rubind/host_unity/archive/master.zip
+.. https://github.com/sdispater/poetry/issues/366
+
+If there is a ``ImportError: Python is not installed as a framework.`` error, this is likely fixed by creating a file ``~/.matplotlib/matplotlibrc`` containing: ``backend: TkAgg``
 
 
 How to use it
-============
+=============
 
-Ask David. Maybe we will get some documentation at some point.
+Information can be found via ``unity --help`` (or ``poetry run unity --help`` if installed inside a Poetry virtual environment). Examples of using UNITY can be see in some of the associated analysis scripts_. 
 
-Then you can run ``unity [OPTIONS] DATA`` where the data is your picked data, defined next. Use ``unity --help`` for more details about the options. Currently only works if run from the within the Unity folder (where ``stan_code_simple.txt`` is in your working directory).
+.. _scripts: https://github.com/rubind/host_unity/blob/master/fitting/makefile 
 
-From a pre-compiled model, with 1000 SNe, it takes ~ 45 mins. For 100 SNe it takes 10-20 mins. This is unless a chain gets stuck, then it can take 2.5 hours or ??? respectively. This was with 8 chains, 1000 iterations, on an 8 core Intel Xeon 2018 iMac Pro.
+From a pre-compiled model, with 1000 SNe, it takes ~ 45 mins. For 100 SNe it takes 10-20 mins. This assumes a chain does not get stuck, then it can take hours. This was with 8 chains, 1000 iterations, on an 8 core Intel Xeon 2018 iMac Pro.
 
 Data
 ----
 
-The data file needs to be a pickled dictionary containing the needed data variables as defined in the data section of the stan code [link]. As an example, ``build_test_dataset.py`` builds and saves this python object in a ``pickle.dump()`` command at the end of the file.
+The data input files need to be a pickled dictionary containing all the expected UNITY variables. This file will be better documented, but for now, you can find some information in the docs_input_data.rst_ file. As an example, ``build_test_dataset.py``_ builds and saves this python object in a ``pickle.dump()`` command at the end of the file.
+
+.. _docs_input_data.rst: https://github.com/rubind/host_unity/blob/master/docs/source/docs_input_data.rst
+.. _``build_test_dataset.py``: https://github.com/rubind/host_unity/blob/master/unity/build_test_dataset.py
 
 A full documentation of these values is to come.
 
 
-Development Instructions
-========================
-
-Dependencies and packaging are maintained by ``poetry``.
-
-BR manages his python version via `pyenv` and the project's virtual environment as the one set up via ``poetry`` via :command:`poetry config settings.virtualenvs.in-project true`. This virtual can be activated by :command:`source .venv/bin/activate`. Since the :file:`.venv/` folder is not in the git repo, any developer can use their preferred environment management tool, just note that development should use an appropriate `python version`_.
-
-.. _python version: https://github.com/rubind/host_unity/blob/master/pyproject.toml#L19
-
-I may just use:
-
-.. code-block:: bash
-	
-	pyenv install 2.7.15
-	pyenv local 2.7.15  # Activate Python 2.7 for the current project
-	poetry install
-
-
------------
-
-Notes on possible directory structure:
-
-``dataset.pkl`` - real data, just a name.
-``testdataset.pkl`` - for test simulated data sets. Names start with test and may be followed by a number to reference an alternative seed for that random dataset.
-``testdataset_true.pkl`` - a pickle file of the true values used to create the simulated data set.
-``dataset_fitparams.gzip.pkl`` - a gziped pickle files of the fit params for a simulated or real data set.
-``dataset_results.txt`` - a text file of the output summary of the fits.
-
-Do we want repeatable, or overwrite? Each data set is unique, but for anyone data set? I am leaning towards just overwrite. We loose same data set with different numbers of samples, but we gain less disk space usage and overwriting of previous bad run results.
-
------------
-
-What does it do
-===============
-
-To be documented.
-
-Maintainers
-===========
-
-David Rubin, @rubind
-Benjamin Rose, @benjaminrose
-
-Contributing
-============
+Development & Contributing Instructions
+=======================================
 
 This is mostly used for our scientific research as such we will only passively maintain this project. You may submit and issue or a pull request, but a response from us will be dependent on our availability and how closely your issue/PR relates to our own research. We are not currently looking to maintain the next great open source project.
 
-Pre-commit and CI tests and de-linters
----------------------------------------
+More detailed contribution instructions will be published soon, but are currently available upon request.
+
+.. Pre-commit and CI tests and de-linters
+.. ---------------------------------------
 
 Code of Conduct
 ---------------
@@ -97,4 +68,11 @@ If you do wish to contribute then we ask you to follow the `Astropy Community Co
 Licensing
 ---------
 
-This code is released under the MIT license as documented in the LICENSE file.
+This code is released under the MIT license as documented in the :file:``LICENSE`` file.
+
+Maintainers
+===========
+
+* David Rubin, @rubind
+* Benjamin Rose, @benjaminrose
+* Sam Dixon, @sam-dixon
