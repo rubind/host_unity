@@ -52,7 +52,9 @@ def cut_for_salt(passed_SN, output_file="salt2_unknownsource", salt_error_model=
             if name not in data["names"]:
                 print(name)
         # TODO(Update so that this stops all makefile dependent operations)
-        from sys import exit; exit()
+        if output_file != 'salt2_00_passed_snemo2_02':
+            # there are known, and accounted for, issues with the SNEMO2/SALT fits
+            from sys import exit; exit()
 
     data["n_sne"] = count
     data["n_props"] = 4

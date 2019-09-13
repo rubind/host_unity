@@ -1,0 +1,3 @@
+count = 39
+names = [ "SN2004ey", "SN2005el", "SN2006ax", "SN2006bh", "SN2005ki", "SN2005eq", "SN2005hc", "SDSS12950", "SN2008bf", "SN2004eo", "SN2005na", "SN2005al", "SN2005ag", "SN2004gu", "SN2006et", "SDSS3901", "SN2007sr", "SN2008bq", "SN2008gp", "SN2005am", "SN2004ef", "SN2009D", "SN2005ke", "SN2008hj", "SN2005hk", "SN2008gl", "SN2008hu", "SN2007le", "SN2009ad", "SN2006D", "SN2005mc", "SN2007ai", "SN2007hj", "SN2007S", "SN2008ar", "SN2005M", "SN2007af", "SN2004gc", "SN2004dt",]
+
