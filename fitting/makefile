@@ -11,12 +11,13 @@ init:
 # 	poetry install
 # 	poetry run unity info
 
-cut-data: snemo7_00_err_lt1.0.pkl snemo7_00_err_lt2.0.pkl \
+CUT-DATA = snemo7_00_err_lt1.0.pkl snemo7_00_err_lt2.0.pkl \
 snemo7_01_err_lt1.0.pkl snemo7_01_err_lt2.0.pkl \
 snemo7_02_err_lt1.0.pkl snemo7_02_err_lt2.0.pkl \
 snemo2_00_err_lt2.0.pkl snemo2_01_err_lt2.0.pkl \
 snemo2_02_err_lt2.0.pkl snemo2_01_err_lt1.0.pkl \
-salt2_00_passed_snemo7_02.pkl dataset_tab.tex ## Cut the raw data for different sigma_i values
+salt2_00_passed_snemo2_02.pkl salt2_00_passed_snemo7_02.pkl dataset_tab.tex
+cut-data: ${CUT-DATA} ## Cut the raw data for different sigma_i values
 
 snemo7_00_err_lt1.0.pkl: snemo7_00.pkl cut_JLA.py
 	poetry run python cut_JLA.py $< 1 7
@@ -46,24 +47,26 @@ salt2_00_passed_snemo7_02.pkl salt2_00_passed_snemo2_02.pkl: salt2_00.pkl snemo7
 	poetry run python cut_salt.py
 
 # updates on get_N_datasets.py and data-cut
-dataset_tab.tex: get_N_dataset.py \
+DATASET-TAB = get_N_dataset.py \
 snemo7_00_err_lt1.0.pkl snemo7_00_err_lt2.0.pkl \
 snemo7_01_err_lt1.0.pkl snemo7_01_err_lt2.0.pkl \
 snemo7_02_err_lt1.0.pkl snemo7_02_err_lt2.0.pkl \
 snemo2_00_err_lt2.0.pkl snemo2_01_err_lt2.0.pkl \
 snemo2_02_err_lt2.0.pkl \
 salt2_00_passed_snemo7_02.pkl
+dataset_tab.tex: ${DATASET-TAB}
 	poetry run python get_N_dataset.py
 
 
 # Does not use all 8 cores, but runs 4 chains/cores at a time
 # Will rerun all models, not just the updated files
-run: snemo7_00_err_lt1.0_fitparams.gzip.pkl snemo7_00_err_lt2.0_fitparams.gzip.pkl \
+RUN = snemo7_00_err_lt1.0_fitparams.gzip.pkl snemo7_00_err_lt2.0_fitparams.gzip.pkl \
 snemo7_01_err_lt1.0_fitparams.gzip.pkl snemo7_01_err_lt2.0_fitparams.gzip.pkl \
 snemo7_02_err_lt1.0_fitparams.gzip.pkl snemo7_02_err_lt2.0_fitparams.gzip.pkl \
 salt2_00_passed_snemo7_02_fitparams.gzip.pkl salt2_00_passed_snemo2_02_fitparams.gzip.pkl \
 snemo2_00_err_lt2.0_fitparams.gzip.pkl snemo2_01_err_lt2.0_fitparams.gzip.pkl \
-snemo2_02_err_lt2.0_fitparams.gzip.pkl snemo2_01_err_lt1.0_fitparams.gzip.pkl ## Runs UNITY on data.
+snemo2_02_err_lt2.0_fitparams.gzip.pkl snemo2_01_err_lt1.0_fitparams.gzip.pkl 
+run: ${RUN} ## Runs UNITY on data.
 
 nsteps = 20000
 
@@ -98,7 +101,10 @@ snemo2_01_err_lt1.0_fitparams.gzip.pkl: snemo2_01_err_lt1.0.pkl
 	poetry run unity run --chains=4 --steps=$(nsteps) --model=stan_code_simple_debug.txt $<
 
 
-paper: FIG_JLA_error_floor_0-2_sigma2.pdf FIG_JLA_error_floor_1_sigma1-2.pdf FIG_SALT2.pdf FIG_SNEMO2_error_floor_0-2_sigma2.pdf results_tab.tex dataset_tab.tex ## Rebuild all the figures and tables.
+PAPER = FIG_JLA_error_floor_0-2_sigma2.pdf FIG_JLA_error_floor_1_sigma1-2.pdf \
+FIG_SALT2.pdf FIG_SNEMO2_error_floor_0-2_sigma2.pdf \
+results_tab_snemo2.tex results_tab_snemo7.tex dataset_tab.tex 
+paper: ${PAPER} ## Rebuild all the figures and tables.
 # remake table
 # 	poetry run python stan2latex.py
 
@@ -186,8 +192,6 @@ help:  ## Displays this message.
 #     and its dependancies. It looks like 'poetry run' acts like an editiable install of unity.
 
 debug:
-# 	pyenv
-# 	pyenv versions
 	@echo $(PATH)
 	which poetry
 	/Users/brose/.poetry/bin/poetry --version
