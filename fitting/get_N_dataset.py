@@ -127,8 +127,8 @@ Table_heaer = r'''\begin{deluxetable*}{l|cccccc|c}[t]
     \colhead{Total}
     }
 \startdata
-Total SNe & 134 & 223 & 97 & 371 & 239 & 9 & 1097\\
-Host mass avail. & 99 & 100 & 97 & 371 & 239 & 9 & 937\\
+Total SNe & 134 & 223 & 97 & 371 & 239 & 9 & 1073\\
+Host mass avail. & 99 & 99 & 97 & 371 & 239 & 9 & 914\\
 \hline
 & & \multicolumn{4}{c}{\hspace{1em}\snemotwo} & & \\
 \textbf{No Error Model} & & & & & & \\
