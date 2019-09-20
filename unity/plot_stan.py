@@ -10,14 +10,16 @@ import numpy as np
 
 import kde_corner
 
-def collect_plot_params(fit_params):
+def collect_plot_params(fit_params, params=None):
     # type: (dict) -> numpy.ndarray
     """Collect the parameters to be plotted from the full UNITY output
     """
+    if params is None:
+        params = ["MB", "sigma_int", "coeff"]
     params_to_plot = []
     labels = []
     
-    for param in ["MB", "sigma_int", "coeff"]:
+    for param in params:
         if len(fit_params[param].shape) == 1:
             params_to_plot.append(fit_params[param])
             labels.append(param)
@@ -32,7 +34,7 @@ def collect_plot_params(fit_params):
     return params_to_plot
 
 
-def plot(file_name, plot_labels, truths, ax_limits=[], kde=True):
+def plot(file_name, plot_labels, truths, plot_params=None, ax_limits=[], kde=True):
     # type: (Union(string, tuple), string, list, bool) -> None
     """Make a corner plot of the UNITY output data.
 
@@ -47,12 +49,12 @@ def plot(file_name, plot_labels, truths, ax_limits=[], kde=True):
     print('Plotting ', file_name)  
 
     if len(file_name) > 1:
-        data_sets = [collect_plot_params(pickle.load(gzip.open(f, 'rb'))) for f in file_name]
+        data_sets = [collect_plot_params(pickle.load(gzip.open(f, 'rb')), plot_params) for f in file_name]
         FIG_NAME = file_name[0][:-9] + '_and_others'
         contours = [0.0455003]
     else:
         fit_params = pickle.load(gzip.open(file_name[0], 'rb'))
-        data_sets = [collect_plot_params(fit_params)]
+        data_sets = [collect_plot_params(fit_params, plot_params)]
         FIG_NAME = file_name[0][:-9]
         contours = [0.317311, 0.0455003]
 

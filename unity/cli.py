@@ -54,14 +54,24 @@ def plot(data, params, axlimits, kde):
                 latest = (output, output.stat().st_mtime)
         data = (str(latest[0]),)
     
+    # parse --axlimits
+    # parse before --params so a default axis per dataset is possible
+    if axlimits is not None:
+        axlimits = array(axlimits.split(' '), dtype=float)
+        axlimits = axlimits.reshape(axlimits.size//2, 2)
+    else:
+        axlimits = []     # Inside of KDE_corner, None throws an error
+
+
     # parse --params
     # todo(should this use Enum?)
+    plot_params = ["MB", "sigma_int", "coeff"]    # default value
     if params == 'snemo+m':
         plot_labels = ['M$_B$', '$\sigma_{unexplained}$', r'$\beta$', r'$\alpha_1$', 
                        r'$\alpha_2$', r'$\alpha_3$', r'$\alpha_4$', r'$\alpha_5$',
                        r'$\alpha_6$', r'$\gamma$']
         # #salt2.4 sigma, beta & alpha values from Suanders et al. 2018 (erratum).
-        truths = [None, 0.14, 1.08, 0.16, 0.022, 0.102, 0.014, 0.045, -0.041, 0] 
+        truths = [None, 0.135, 1.08, 0.16, 0.022, 0.102, 0.014, 0.045, -0.041, -0.0149] 
     elif params == 'salt+m':
         plot_labels = ['M$_B$', '$\sigma_{unexplained}$', r'$\alpha$', r'$\beta$', r'$\gamma$']
         truths = [None, None, None, None, 0]
@@ -71,7 +81,7 @@ def plot(data, params, axlimits, kde):
     elif params == 'snemo2+m':
         plot_labels = ['M$_B$', '$\sigma_{unexplained}$', r'$\beta$', r'$\alpha_1$',
                        r'$\gamma$']
-        truths = [None, 0.117, None, None, -0.0399]
+        truths = [None, 0.116, None, None, -0.0428]
     elif params == 'mass_local_global':
         plot_labels = ['M$_B$', '$\sigma_{unexplained}$', r'$\alpha$', r'$\beta$',
                        r'$\gamma_m$', r'$\gamma_{al}$', r'$\gamma_{ag}$']
@@ -80,6 +90,11 @@ def plot(data, params, axlimits, kde):
         plot_labels = ['M$_B$', '$\sigma_{unexplained}$', r'$\alpha$', r'$\beta$',
                        r'$\gamma_m$', r'$\gamma_{al}$']
         truths = [None, 0.123, -0.15, 3.09, 0, 0]
+    elif params == 'mass_local_poster':
+        plot_params = ["sigma_int", "coeff"]
+        plot_labels = ['$\sigma_{unexplained}$', r'$\alpha$', r'$\beta$',
+                       r'$\gamma_m$', r'$\gamma_{al}$']
+        truths = [0.123, -0.15, 3.09, 0, 0]
     elif params == 'mass_global':
         plot_labels = ['M$_B$', '$\sigma_{unexplained}$', r'$\alpha$', r'$\beta$',
                        r'$\gamma_m$', r'$\gamma_{ag}$']
@@ -92,6 +107,21 @@ def plot(data, params, axlimits, kde):
         plot_labels = ['M$_B$', '$\sigma_{unexplained}$', r'$\alpha$', r'$\beta$',
                        r'$\gamma_{al}$']
         truths = [None, 0.123, -0.15, 3.09, 0]
+    elif params == 'local_poster':
+        plot_params = ["sigma_int", "coeff"]
+        plot_labels = ['$\sigma_{unexplained}$', r'$\alpha$', r'$\beta$',
+                       r'$\gamma_{al}$']
+        truths = [0.123, -0.15, 3.09, 0]
+    elif params == 'mass':    #same as 'salt+m'
+        plot_labels = ['M$_B$', '$\sigma_{unexplained}$', r'$\alpha$', r'$\beta$',
+                       r'$\gamma_{m}$']
+        truths = [None, 0.123, -0.15, 3.09, 0]
+    elif params == 'mass_poster':
+        plot_params = ["sigma_int", "coeff"]
+        plot_labels = ['$\sigma_{unexplained}$', r'$\alpha$', r'$\beta$',
+                       r'$\gamma_{m}$']
+        truths = [0.123, -0.15, 3.09, 0]
+
     else:
         if params is not None:
             raise NotImplementedError("User defined params is not yet implemented, https://github.com/pallets/click/issues/1366")
@@ -100,14 +130,7 @@ def plot(data, params, axlimits, kde):
             if len(params) > 4:
                 assert len(plot_labels) == len(truths)
 
-    # parse --axlimits
-    if axlimits is not None:
-        axlimits = array(axlimits.split(' '), dtype=float)
-        axlimits = axlimits.reshape(axlimits.size//2, 2)
-    else:
-        axlimits = []     # Inside of KDE_corner, None throws an error
-
-    plot_stan.plot(data, plot_labels, truths, axlimits, kde)
+    plot_stan.plot(data, plot_labels, truths, plot_params, axlimits, kde)
 
 
 # Todo(update to click.echo rather than print)
