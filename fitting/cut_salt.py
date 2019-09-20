@@ -13,6 +13,7 @@ import warnings
 import numpy as np
 import toml
 
+
 NAME_PREFIX = ""
 
 
@@ -86,10 +87,7 @@ def cut_for_salt(passed_SN, output_file="salt2_unknownsource", salt_error_model=
         print(toml.dumps({"count": count, "names": data["names"][passed_cut]}), file=f)
 
 
-<<<<<<< HEAD
 
-=======
->>>>>>> cf737863172481bad86656ec88c589de23f5e18a
 PASSED_SNEMO7 = passed_data(NAME_PREFIX + "snemo7_00_err_lt2.0.txt")
 PASSED_SNEMO2 = passed_data(NAME_PREFIX + "snemo2_00_err_lt2.0.txt")
 
