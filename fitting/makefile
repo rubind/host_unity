@@ -112,7 +112,7 @@ paper: ${PAPER} ## Rebuild all the figures and tables.
 FIG_JLA_error_floor_0-2_sigma2.pdf: snemo7_02_err_lt2.0_fitparams.gzip.pkl \
 snemo7_01_err_lt2.0_fitparams.gzip.pkl snemo7_00_err_lt2.0_fitparams.gzip.pkl
 	poetry run unity plot \
-		--axlimits='-20.05 -18.95 0.03 0.21 -0.1 2.1 -0.3 0.3 -0.3 0.3 -0.3 0.3 -0.3 0.3 -0.3 0.3 -0.3 0.3 -0.3 0.3' \
+		--axlimits='-20.05 -18.95 0.03 0.21 -0.1 2.1 -0.22 0.22 -0.22 0.22 -0.22 0.22 -0.22 0.22 -0.22 0.22 -0.22 0.22 -0.22 0.22' \
 		snemo7_02_err_lt2.0_fitparams.gzip.pkl snemo7_01_err_lt2.0_fitparams.gzip.pkl \
 		snemo7_00_err_lt2.0_fitparams.gzip.pkl
 	mv 'snemo7_02_err_lt2.0_fitparams_and_others.pdf' 'FIG_JLA_error_floor_0-2_sigma2.pdf'
@@ -120,7 +120,7 @@ snemo7_01_err_lt2.0_fitparams.gzip.pkl snemo7_00_err_lt2.0_fitparams.gzip.pkl
 FIG_JLA_error_floor_1_sigma1-2.pdf: snemo7_01_err_lt2.0_fitparams.gzip.pkl \
 snemo7_01_err_lt1.0_fitparams.gzip.pkl
 	poetry run unity plot \
-	--axlimits='-20.05 -18.95 0.03 0.21 -0.1 2.1 -0.3 0.3 -0.3 0.3 -0.3 0.3 -0.3 0.3 -0.3 0.3 -0.3 0.3 -0.3 0.3' \
+	--axlimits='-20.05 -18.95 0.03 0.21 -0.1 2.1 -0.22 0.22 -0.22 0.22 -0.22 0.22 -0.22 0.22 -0.22 0.22 -0.22 0.22 -0.22 0.22' \
 	snemo7_01_err_lt2.0_fitparams.gzip.pkl snemo7_01_err_lt1.0_fitparams.gzip.pkl
 	mv 'snemo7_01_err_lt2.0_fitparams_and_others.pdf' 'FIG_JLA_error_floor_1_sigma1-2.pdf'
 
@@ -131,7 +131,7 @@ snemo7_01_err_lt1.0_fitparams.gzip.pkl
 
 FIG_SALT2.pdf: salt2_00_passed_snemo7_02_fitparams.gzip.pkl salt2_00_passed_snemo2_02_fitparams.gzip.pkl
 	poetry run unity plot --params=salt+m \
-		--axlimits='-19.24 -19.1 0.09 0.18 -0.17 -0.085 2.6 3.4 -0.155 0.08' \
+		--axlimits='-19.24 -19.16 0.09 0.18 -0.17 -0.085 2.6 3.4 -0.155 0.08' \
 		salt2_00_passed_snemo7_02_fitparams.gzip.pkl salt2_00_passed_snemo2_02_fitparams.gzip.pkl
 	mv 'salt2_00_passed_snemo7_02_fitparams_and_others.pdf' 'FIG_SALT2.pdf'
 
