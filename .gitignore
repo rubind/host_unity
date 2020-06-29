@@ -122,3 +122,5 @@ unity/model_cache/
 salt2*passed_*.pkl
 unity/data_*/
 pip-wheel-metadata/
+
+RRSG2020/*.pkl
