@@ -10,7 +10,20 @@ This project is an adaption of UNITY_ that allows for standardization of Type Ia
 Installing UNITY
 ================
 
-This application is maintained via via Poetry_ and the ``pyproject.toml`` file. Its depends on Python 3 (tested with 3.7) and most of the typical scientific software stack_.
+Installation is poorly tested and documented after one reinstall. Bellow there be errors.
+
+With the repo downloaded and a `conda` installation working, from inside the root directory of UNITY:
+
+.. code-block:: bash
+    conda env create -f unity.yaml
+    conda activate unity
+    pip install .
+
+The full list of pinned dependencies can be found in ``unity-lock.yaml``. Installing `unity` can also be done in editable mode: `` pip install -e .``. Currently only the `unity` application is supported; it is not accessible as an importable module.
+
+Previous and still possible installation instructions, if if you change the ``pyproject.toml`` and ``setup.py`` files :
+
+This application was maintained via via Poetry_ and the ``pyproject.toml`` file. Its depends on Python 3 (tested with 3.7) and most of the typical scientific software stack_.
 
 .. _Poetry: https://poetry.eustace.io
 .. _stack: https://github.com/rubind/host_unity/blob/master/pyproject.toml#L18

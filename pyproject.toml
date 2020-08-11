@@ -37,6 +37,9 @@ sphinx_rtd_theme = "^0.4.3"
 [tool.poetry.scripts]
 unity = "unity.cli:cli"
 
+#[build-system]
+#requires = ["poetry>=0.12"]
+#build-backend = "poetry.masonry.api"
+
 [build-system]
-requires = ["poetry>=0.12"]
-build-backend = "poetry.masonry.api"
+requires = ["setuptools", "wheel", "oldest-supported-numpy", "Cython"]
