@@ -3,15 +3,15 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - click=7.1.2=pyh9f0ad1d_0
-  - corner=2.1.0=pyh9f0ad1d_0
-  - matplotlib=3.3.0=1
-  - numpy=1.19.1=py38h598c1e0_0
-  - pandas=1.1.0=py38h11c0d25_0
-  - pystan=2.19.1.1=py38h4f17bb1_1
-  - python=3.8.5=h85f3143_2_cpython
-  - scipy=1.5.2=py38h1402333_0
-  - seaborn=0.10.1=1
-  - sncosmo=2.1.0=py38h3b54f70_0
-  - toml=0.10.1=pyh9f0ad1d_0
-  - pip=20.2.2=py_0
+  - click
+  - corner
+  - matplotlib
+  - numpy
+  - pandas
+  - pystan
+  - python=3.8
+  - scipy
+  - seaborn
+  - sncosmo
+  - toml
+  - pip
