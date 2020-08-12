@@ -14,7 +14,8 @@ Installation is poorly tested and documented after one reinstall. Bellow there b
 
 With the repo downloaded and a `conda` installation working, from inside the root directory of UNITY:
 
-.. code-block:: bash
+.. code-block:: shell
+
     conda env create -f unity.yaml
     conda activate unity
     pip install .
